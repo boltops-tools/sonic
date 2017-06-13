@@ -4,12 +4,12 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'sonic/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "sonic"
+  spec.name          = "sonic-screwdriver"
   spec.version       = Sonic::VERSION
   spec.authors       = ["Tung Nguyen"]
   spec.email         = ["tongueroo@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{Multi-functional tool to manage AWS infrastructure}
+  spec.summary       = %q{Multi-functional tool to manage AWS infrastructure}
   spec.homepage      = ""
   spec.license       = "MIT"
 
