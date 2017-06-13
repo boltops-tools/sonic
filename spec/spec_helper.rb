@@ -3,6 +3,9 @@ ENV['TEST'] = '1'
 require 'simplecov'
 SimpleCov.start
 
+# Ensures aws api never called. Fixture home folder does not contain ~/.aws/credentails
+ENV['HOME'] = "spec/fixtures/home"
+
 require "pp"
 
 root = File.expand_path('../../', __FILE__)
