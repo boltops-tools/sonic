@@ -90,7 +90,14 @@ module Sonic
     end
 
     def instance_hostname(ec2_instance_id)
-      instance = ec2.describe_instances(instance_ids: [ec2_instance_id]).reservations[0].instances[0]
+      begin
+        resp = ec2.describe_instances(instance_ids: [ec2_instance_id])
+      rescue Aws::EC2::Errors::InvalidInstanceIDNotFound => e
+        # e.message: The instance ID 'i-027363802c6ff3141' does not exist
+        UI.error(e.message)
+        exit 1
+      end
+      instance = resp.reservations[0].instances[0]
       # struct Aws::EC2::Types::Instance
       # http://docs.aws.amazon.com/sdkforruby/api/Aws/EC2/Types/Instance.html
       host = instance.public_dns_name

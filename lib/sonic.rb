@@ -1,6 +1,7 @@
 $:.unshift(File.expand_path("../", __FILE__))
 require "sonic/version"
 require "aws-sdk"
+require "colorize"
 
 module Sonic
   autoload :Command, 'sonic/command'
@@ -10,4 +11,5 @@ module Sonic
   autoload :AwsServices, 'sonic/aws_services'
   autoload :Ssh, 'sonic/ssh'
   autoload :Docker, 'sonic/docker'
+  autoload :UI, 'sonic/ui'
 end
