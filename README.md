@@ -1,6 +1,6 @@
 # Sonic
 
-Sonic contains is a group of commands that help debug EC2 instance and ECS containers quickly.
+Sonic is a multi-functional tool that helps you manage AWS resources. Sonic contains is a group of commands that help debug EC2 instance and ECS containers quickly.
 
 ## Why Sonic Was Created
 

@@ -14,7 +14,6 @@ module Sonic
     end
 
     def run
-      check_cluster_exists! unless @options[:noop]
       kernel_exec("ssh", ssh_host)
     end
 
@@ -25,17 +24,21 @@ module Sonic
     end
 
     def build_ssh_host
-      ec2_instance_id = if instance_id?
-                          @identifier
-                        elsif container_instance_or_task_arn?
-                          find_by_container_instance(@identifier) ||
-                          find_by_task(@identifier)
-                        else # service name
-                          check_service_exists!
-                          check_tasks_running!
-                          container_instance_arn = task.container_instance_arn
-                          find_by_container_instance(container_instance_arn)
-                        end
+      if instance_id?
+        ec2_instance_id = @identifier
+      else
+        check_cluster_exists! unless @options[:noop]
+        ec2_instance_id = if container_instance_or_task_arn?
+                            find_by_container_instance(@identifier) ||
+                            find_by_task(@identifier)
+                          else # service name
+                            check_service_exists!
+                            check_tasks_running!
+                            container_instance_arn = task.container_instance_arn
+                            find_by_container_instance(container_instance_arn)
+                          end
+      end
+
       instance_hostname(ec2_instance_id)
     end
 
@@ -109,7 +112,7 @@ module Sonic
     def kernel_exec(*args)
       # append the optional command that can be provided to the ssh command
       full_command = args + @options[:command]
-      puts "Running: #{full_command.join(' ')}"
+      puts "=> #{full_command.join(' ')}".colorize(:green)
       # https://ruby-doc.org/core-2.3.1/Kernel.html#method-i-exec
       # Using 2nd form
       Kernel.exec(*full_command) unless @options[:noop]
