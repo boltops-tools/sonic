@@ -2,9 +2,11 @@
 
 Sonic contains is a group of commands that help debug EC2 instance and ECS containers quickly.
 
-After I exhaust debugging an ECS service with CloudWatch Logs I usually take it to the the next step. I ssh into an instance with a running task or docker container and poke around to figure out the issue.
+## Why Sonic Was Created
 
-In order to find the instance with the service's docker container I click around on the ECS console website until I find the container instance's DNS name and then paste it to the terminal. The process is not complicated but it is tedious.  For example, the typical process is:
+After I exhaust debugging an ECS service with CloudWatch Logs I usually take it to the the next step: ssh into the instance. I jump into an instance with a running task or docker container and poke around to figure out the root issue.
+
+In order to find the instance with the service's docker container I click around on the ECS console website until I find the container instance's DNS name and then paste it to the terminal. While this process is not complicated, it is tedious.  For example, the typical process is:
 
 1. Click on the cluster
 2. Click on the service
@@ -18,15 +20,16 @@ In order to find the instance with the service's docker container I click around
 10. Run docker exec -ti [container_id] bash
 11. Finally, debug the actual problem
 
-By the time I get into the container, I need to remind my brain on what the original issue was.  This tool automates that process so you do not waste your precious finger energy clicking on links and use it to focus on better things like fixing the actual issue.
+By the time I get into the container, I need to remind my brain on what the original issue was.  This tool automates that process so you do not waste your precious mental energy clicking on links and use it to focus on better things like fixing the **actual** issue.
 
 ## Install
 
-Locally on your machine.
+### Install Via RubyGems
 
 ```
 gem install sonic-ssh
 ```
+
 Set up your AWS credentials at `~/.aws/credentials` and `~/.aws/config`.  This is the [AWS standard way of setting up credentials](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/).
 
 Note that the gem is named `sonic-ssh` but the command is `sonic`.
@@ -35,7 +38,7 @@ Note that the gem is named `sonic-ssh` but the command is `sonic`.
 
 * [jq](https://stedolan.github.io/jq/manual/) - a lightweight and flexible command-line JSON processor
 
-If you are also using the `exec` and `run` commands, then you will need to ensure that [jq](https://stedolan.github.io/jq/) is installed on all of your ECS container instances.  If you are only using the `sonic ssh` command then you do not need the jq dependency.
+If you are also using the `ecs-exec` and `ecs-run` commands, then you will need to ensure that [jq](https://stedolan.github.io/jq/) is installed on all of your ECS container instances.  If you are only using the `sonic ssh` command then you do not need the jq dependency.
 
 ## Usage
 
@@ -123,7 +126,7 @@ sonic ecs-run my-service bash # same thing
 
 ## Settings
 
-A `~/.sonic/settings.yml` file is support that maps services to clusters.  This is very useful if you get tired of typing the `--cluster` option every time.  Here is an example `~/.sonic/settings.yml`:
+A `~/.sonic/settings.yml` file is useful to adjust the behavior of sonic. One of the useful options is the `service_clsuter`.  This optoin maps services to clusters.  This saves you from  typing the `--cluster` option every time.  Here is an example `~/.sonic/settings.yml`:
 
 ```yaml
 service_cluster:
