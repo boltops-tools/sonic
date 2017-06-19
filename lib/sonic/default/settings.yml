@@ -1,0 +1,12 @@
+bastion: # defaults to nil
+host_key_check: false
+service_cluster:
+  default: # defaults to nil
+  # Examples:
+  # hi-web-prod: prod
+  # hi-clock-prod: prod
+  # hi-worker-prod: prod
+  # hi-web-stag: stag
+  # hi-clock-stag: stag
+  # hi-worker-stag: stag
+user: ec2-user

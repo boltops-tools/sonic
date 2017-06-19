@@ -4,12 +4,13 @@ require "aws-sdk"
 require "colorize"
 
 module Sonic
-  autoload :Command, 'sonic/command'
-  autoload :Settings, 'sonic/settings'
-  autoload :Defaults, 'sonic/defaults'
-  autoload :CLI, 'sonic/cli'
   autoload :AwsServices, 'sonic/aws_services'
-  autoload :Ssh, 'sonic/ssh'
+  autoload :CLI, 'sonic/cli'
+  autoload :Command, 'sonic/command'
   autoload :Docker, 'sonic/docker'
+  autoload :Execute, 'sonic/execute'
+  autoload :List, 'sonic/list'
+  autoload :Settings, 'sonic/settings'
+  autoload :Ssh, 'sonic/ssh'
   autoload :UI, 'sonic/ui'
 end

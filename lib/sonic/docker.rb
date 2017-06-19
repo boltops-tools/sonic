@@ -2,39 +2,83 @@ require 'fileutils'
 
 module Sonic
   class Docker < Ssh
-    def setup
-      check_service_exists!
-      check_tasks_running!
-      create_container_data
-      black_hole = " > /dev/null" unless @options[:verbose]
-      black_hold = ''
-      execute("scp -r #{data_path} #{ssh_host}:#{data_path} #{black_hole}")
-      FileUtils.rm_rf(data_path) # clean up locally
-      # the docker-exec.sh cleans up after itself and blows away /tmp/sonic
-    end
-
     def exec
-      setup
-      docker_exec = "/tmp/sonic/bash_scripts/docker-exec.sh"
-      kernel_exec("ssh", "-t", ssh_host, "bash #{docker_exec}")
+      call("/tmp/sonic/bash_scripts/docker-exec.sh")
     end
 
     # I cannot name this run like 'docker run' because run is a keyword in Thor.
     def run
-      setup
-      docker_run = "/tmp/sonic/bash_scripts/docker-run.sh"
-      # args = ["ssh", ssh_host, "bash #{docker_run} #{options[:docker_options]}"].compact
-      args = ["ssh", "-t", ssh_host, "bash", docker_run, @options[:docker_command]].compact
-      kernel_exec(*args)
+      call("/tmp/sonic/bash_scripts/docker-run.sh")
     end
 
-    def data_path
+    def tmp_sonic_path
       "/tmp/sonic"
     end
 
-    def execute(command)
-      puts "Running: #{command}"
-      system(command)
+    def setup
+      validate!
+      copy_over_container_data
+    end
+
+    def validate!
+      check_service_exists!
+      check_tasks_running!
+    end
+
+    # command is an Array
+    def execute(*command)
+      UI.say "=> #{command.join(' ')}".colorize(:green)
+      success = system(*command)
+      unless success
+        UI.error(command.join(' '))
+        exit 1
+      end
+    end
+
+    def call(script)
+      setup
+
+      ssh = build_ssh_command
+      args = ssh + ["bash", script]
+
+      kernel_exec(*args)
+    end
+
+    def copy_over_container_data
+      create_container_data
+
+      host = @bastion ? bastion_host : ssh_host
+
+      # LEVEL 1
+      # Always clean up remote /tmp/sonic in case of previous interrupted run.
+      # Dont use build_ssh_command because we always want to build only the first level server
+      ssh = ["ssh", ssh_options, "-At", host]
+      clean = ssh + %w[rm -rf /tmp/sonic] + black_hole
+      execute(clean.join(' '))
+
+      # Copy over the data files
+      dest = "#{host}:#{tmp_sonic_path}"
+      scp = ["scp", ssh_options, "-r", tmp_sonic_path, dest] + black_hole
+      execute(scp.join(' ')) # need to use String form for black_hole redirection to work
+
+      # LEVEL 2
+      # Need to scp the files over another hop if bastion is involved
+      if @bastion
+        # Always clean up remote /tmp/sonic in case of previous interrupted run.
+        ssh = build_ssh_command
+        clean = ssh + %w[rm -rf /tmp/sonic] + black_hole
+        execute(clean.join(' '))
+
+        # Dont use build_ssh_command because we want to scp from the first level to the second level server
+        ssh = ["ssh", ssh_options, "-At", bastion_host]
+        dest = "#{ssh_host}:#{tmp_sonic_path}"
+        scp = ["scp"] + ssh_options + ["-r", tmp_sonic_path, dest] + black_hole
+        command = ssh + scp
+        execute(command.join(' '))
+      end
+      # Clean up locally now that everything has been successfully copied over remotely.
+      FileUtils.rm_rf(tmp_sonic_path)
+      # The bash_scripts cleans up after themselves on the servers by and blows away /tmp/sonic.
     end
 
     # Data that is needed in order to run a new docker container that mimics the
@@ -74,6 +118,10 @@ module Sonic
 
     def bash_scripts
       File.expand_path("../../bash_scripts", __FILE__)
+    end
+
+    def black_hole
+      @options[:verbose] ? [] : %w[> /dev/null 2>&1]
     end
 
   end

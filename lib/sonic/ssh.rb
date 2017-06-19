@@ -2,19 +2,37 @@ require 'colorize'
 
 module Sonic
   class Ssh
-    include Defaults
+    autoload :IdentifierDetector, 'sonic/ssh/identifier_detector'
+
     include AwsServices
 
     def initialize(identifier, options)
       @options = options
-      @identifier = identifier
-      @service = @identifier # always set service even though sometimes it is not the identifier
-      @cluster = options[:cluster] || default_cluster
-      @user = options[:user] || default_user
+
+      @user, @identifier = extract_user!(identifier) # extracts/strips user from identifier
+      # While --user option is supported at the class level, don't expose at the CLI level
+      # to encourage users to use user@host notation.
+      @user ||= options[:user] || settings.data["user"]
+
+      @service = @identifier # always set service even though it's not always used as the identifier
+      @cluster = options[:cluster] || settings.default_cluster(@service)
+      @bastion = options[:bastion] || settings.data["bastion"]
     end
 
     def run
-      kernel_exec("ssh", ssh_host)
+      ssh = build_ssh_command
+      kernel_exec(*ssh) # must splat the Array here
+    end
+
+    def bastion_host
+      return @identifier if @options[:noop] # for specs
+      @bastion_host ||= build_bastion_host
+    end
+
+    def build_bastion_host
+      host = @bastion
+      host = "#{@user}@#{host}" unless host.include?('@')
+      host
     end
 
     # used by child Classes
@@ -24,69 +42,9 @@ module Sonic
     end
 
     def build_ssh_host
-      if instance_id?
-        ec2_instance_id = @identifier
-      else
-        check_cluster_exists! unless @options[:noop]
-        ec2_instance_id = if container_instance_or_task_arn?
-                            find_by_container_instance(@identifier) ||
-                            find_by_task(@identifier)
-                          else # service name
-                            check_service_exists!
-                            check_tasks_running!
-                            container_instance_arn = task.container_instance_arn
-                            find_by_container_instance(container_instance_arn)
-                          end
-      end
-
-      instance_hostname(ec2_instance_id)
-    end
-
-    def find_by_task(task_arn)
-      response = ecs.describe_tasks(
-                    cluster: @cluster,
-                    tasks: [task_arn])
-      task = response.tasks.first
-      unless task
-        puts "Unable to find a #{task_arn.green} container instance or task in the #{@cluster.green} cluster."
-        exit 1
-      end
-      find_by_container_instance(task.container_instance_arn)
-    end
-
-    def find_by_container_instance(container_instance_arn)
-      response = ecs.describe_container_instances(
-                    cluster: @cluster,
-                    container_instances: [container_instance_arn])
-      container_instance = response.container_instances.first
-      unless container_instance
-        return false
-      end
-      ec2_instance_id = container_instance.ec2_instance_id
-    end
-
-    def check_cluster_exists!
-      cluster = ecs.describe_clusters(clusters: [@cluster]).clusters.first
-      unless cluster
-        puts "The #{@cluster.green} cluster does not exist.  Are you sure you specified the right cluster?"
-        exit 1
-      end
-    end
-
-    def check_service_exists!
-      service = ecs.describe_services(services: [@service], cluster: @cluster).services.first
-      unless service
-        puts "The #{@service.green} service does not exist in #{@cluster.green} cluster.  Are you sure you specified the right service and cluster?"
-        exit 1
-      end
-    end
-
-    def check_tasks_running!
-      if task_arns.empty?
-        puts "Unable to find a running task that belongs to the #{@service} service on the #{@cluster} cluster."
-        puts "There must be a running task in order for sonic to look up an container instance."
-        exit 1
-      end
+      detector = Ssh::IdentifierDetector.new(@cluster, @service, @identifier, @options)
+      instance_id = detector.detect!
+      instance_hostname(instance_id)
     end
 
     def instance_hostname(ec2_instance_id)
@@ -100,20 +58,13 @@ module Sonic
       instance = resp.reservations[0].instances[0]
       # struct Aws::EC2::Types::Instance
       # http://docs.aws.amazon.com/sdkforruby/api/Aws/EC2/Types/Instance.html
-      host = instance.public_dns_name
+      host = if @bastion
+              instance.private_ip_address
+            else
+              instance.public_ip_address
+            end
       "#{@user}@#{host}"
     end
-
-    def task_arns
-      @task_arns ||= ecs.list_tasks(cluster: @cluster, service_name: @service).task_arns
-    end
-
-    # Only need one container instance to ssh into so we'll just use the first.
-    # Useful to have this in a method for subclasses like Sonic::Exec.
-    def task
-      @task ||= ecs.describe_tasks(cluster: @cluster, tasks: [task_arns.first]).tasks.first
-    end
-
 
     # Will use Kernel.exec so that the ssh process takes over this ruby process.
     def kernel_exec(*args)
@@ -125,26 +76,61 @@ module Sonic
       Kernel.exec(*full_command) unless @options[:noop]
     end
 
-    # Examples:
-    #
-    # Container instance ids:
-    # b748e59a-b679-42a7-b713-afb12294935b
-    # 9f1dadc7-4f67-41da-abec-ec08810bfbc9
-    #
-    # Task ids:
-    # 222c9e66-780b-4755-8c16-8670988e8011
-    # 6358f9c2-b231-4f5b-a59b-15bf19d52a15
-    #
-    # Container instance and task ids have the same format
-    def container_instance_or_task_arn?
-      @identifier =~ /.{8}-.{4}-.{4}-.{4}-.{12}/
+private
+    def settings
+      @settings ||= Settings.new(@options[:project_root])
     end
 
-    # Examples:
-    # i-006a097bb10643e20
-    def instance_id?
-      @identifier =~ /i-.{17}/
+    # Returns Array of flags.
+    def ssh_options
+      settings.host_key_check_options
     end
 
+    # Will prepend the bastion host if required
+    # When bastion set
+    #   ssh [options] -At [bastion_host] ssh -At [ssh_host]
+    #
+    # When bastion not set
+    #   ssh [options] -At [ssh_host]
+    #
+    # Builds up ssh command to be used with Kernel.exec. Will look something like this:
+    #   ssh -At ec2-user@34.211.223.3 ssh ec2-user@10.10.110.135
+    # It is imporant to use an Array for the command so it gets intrepreted as if you are
+    # executing it from the shell directly. For example, globs gets expanded with the
+    # Array notation but not the String notation.
+    #
+    # ssh options:
+    # -A = Enables forwarding of the authentication agent connection
+    # -t = Force pseudo-terminal allocati
+    def build_ssh_command
+      ssh = ["ssh"] + ssh_options
+      ssh += ["-At", bastion_host, "ssh"] if @bastion
+      # ssh_host is internal ip when bastion is set
+      # ssh_host is public ip when bastion is not set
+      ssh += ["-At", ssh_host]
+      ssh
+    end
+
+    # Private: Extracts and strips the user from the identifier.
+    #
+    # identifier  - Can be a variety of things: instance_id, ecs service, ecs task, etc.
+    #
+    # Examples
+    #
+    #   extract_user!("i-0f7f833131a51ce35")
+    #   # => [nil, "i-0f7f833131a51ce35"]
+    #
+    #   extract_user!("ec2-user@i-0f7f833131a51ce35")
+    #   # => ["ec2-user", "i-0f7f833131a51ce35"]
+    #
+    # Returns the a tuple cotaining the user and identifier
+    def extract_user!(identifier)
+      md = identifier.match(/(.*)@(.*)/)
+      if md
+        [md[1], md[2]]
+      else
+        [nil, identifier]
+      end
+    end
   end
 end
