@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "sonic-screwdriver"
   spec.version       = Sonic::VERSION
   spec.authors       = ["Tung Nguyen"]
-  spec.email         = ["tongueroo@gmail.com"]
+  spec.email         = ["tung@boltops.com"]
   spec.description   = %q{Multi-functional tool to manage AWS infrastructure}
   spec.summary       = %q{Multi-functional tool to manage AWS infrastructure}
   spec.homepage      = ""
