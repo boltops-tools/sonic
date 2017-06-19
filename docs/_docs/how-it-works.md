@@ -29,6 +29,6 @@ A bash script is also copied.
 NOTE: I thought it would be possible to map the container instance info from `aws ecs describe-services` but it is not possible. But we can map to the container instance DNS name starting from `aws ecs list-tasks`.
 
 
-<a id="prev" class="btn btn-basic" href="{% link _docs/why.md %}">Back</a>
+<a id="prev" class="btn btn-basic" href="{% link _docs/why-ec2-run-command.md %}">Back</a>
 <a id="next" class="btn btn-primary" href="{% link _docs/next-steps.md %}">Next Step</a>
 <p class="keyboard-tip">Pro tip: Use the <- and -> arrow keys to move back and forward.</p>

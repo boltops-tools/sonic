@@ -82,37 +82,10 @@ sonic ssh hi-web-stag
 
 ### Bastion Host
 
-If you have an bastion host server which provides access to your internal servers then it is even more work to build up the ssh command.  The good news is that `sonic ssh` command also automates this!
-
 Thus far we have assumed that the instances we are hopping into are publicly available on a public subnet and have an public ip address associate with it.  A common AWS setup is to have your servers on internal subnets without public addresses.  In this case we must first ssh into the bastion host and from there you can "jump" to the actually server.  This why the bastion host is also called a jump host.
 
-You can configure the `settings.yml` file again to use a bastion host. Here's an example:
+If you have an bastion host server which provides access to your internal servers then it is even more work to build up the ssh command.  The good news is that `sonic ssh` command also automates this! The [Bastion Setup]({% link _docs/install-bastion.md %}) doc covers how to set this up.
 
-```yaml
-bastion: bastion.mydomain.com
-```
-
-You run the `sonic ssh` command exactly the same way:
-
-```
-sonic ssh i-0f7f833131a51ce35
-```
-
-You should notice that the built up command now includes the bastion jump host.
-
-```
-$ sonic ssh i-0f7f833131a51ce35 uptime
-=> ssh -At ec2-user@34.211.223.3 ssh ec2-user@10.10.110.135 uptime
-Warning: Permanently added '34.211.223.3' (ECDSA) to the list of known hosts.
-Warning: Permanently added '10.10.110.135' (ECDSA) to the list of known hosts.
- 18:35:18 up  1:14,  0 users,  load average: 0.24, 0.07, 0.02
-Connection to 34.211.223.3 closed.
-$
-```
-
-Notice that the ssh command produced has the bastion jump host daisy chained in the command for you.
-
-You can also specify the bastion host as a CLI option with `--bastion`, though it is recommended that you configure it in a `settings.yml` file so you don't have to type it repeatedly.
 
 <a id="prev" class="btn btn-basic" href="{% link _docs/tutorial.md %}">Back</a>
 <a id="next" class="btn btn-primary" href="{% link _docs/tutorial-ecs-exec.md %}">Next Step</a>

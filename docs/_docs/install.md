@@ -70,6 +70,6 @@ $
 More information is provided in the AWS Run Command Walkthrough [Using the AWS CLI](http://docs.aws.amazon.com/systems-manager/latest/userguide/walkthrough-cli.html).
 
 <a id="prev" class="btn btn-basic" href="{% link docs.md %}">Back</a>
-<a id="next" class="btn btn-primary" href="{% link _docs/tutorial.md %}">Next Step</a>
+<a id="next" class="btn btn-primary" href="{% link _docs/install-bastion.md %}">Next Step</a>
 <p class="keyboard-tip">Pro tip: Use the <- and -> arrow keys to move back and forward.</p>
 
