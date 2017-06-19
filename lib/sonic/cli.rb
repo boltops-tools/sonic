@@ -32,7 +32,7 @@ module Sonic
     check_unknown_options! :except => :execute
     desc "execute [COMMAND]", "runs command across fleet of servers via AWS Run Command"
     long_desc Help.execute
-    option :filter, type: :string, required: true, desc: "Filter ec2 instances by tag name or instance_ids separated by commas"
+    option :filter, aliases: '-f', type: :string, required: true, desc: "Filter ec2 instances by tag name or instance_ids separated by commas"
     def execute(*command)
       Execute.new(command, options).execute
     end
@@ -40,7 +40,7 @@ module Sonic
     desc "list", "lists ec2 instances"
     long_desc Help.list
     option :header, type: :boolean, desc: "Displays header"
-    option :filter, type: :string, desc: "Filter ec2 instances by tag name or instance_ids separated by commas"
+    option :filter, aliases: '-f', type: :string, desc: "Filter ec2 instances by tag name or instance_ids separated by commas"
     def list
       List.new(options).run
     end

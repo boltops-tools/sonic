@@ -9,7 +9,6 @@ module Sonic
 
     def run
       options = transform_filter_option(@filter)
-      puts "options #{options.inspect}"
       if @options[:noop]
         instances = []
       else
