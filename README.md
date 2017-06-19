@@ -1,6 +1,6 @@
 # Sonic
 
-Sonic is a multi-functional tool that helps you manage AWS resources. Sonic contains is a group of commands that help debug EC2 instance and ECS containers quickly.
+Sonic is a multi-functional tool that helps you manage AWS resources. Sonic contains is a group of commands that help debug EC2 instances and ECS containers quickly.
 
 ## Why Sonic Was Created
 
@@ -27,12 +27,12 @@ By the time I get into the container, I need to remind my brain on what the orig
 ### Install Via RubyGems
 
 ```
-gem install sonic-ssh
+gem install sonic-screwdriver
 ```
 
 Set up your AWS credentials at `~/.aws/credentials` and `~/.aws/config`.  This is the [AWS standard way of setting up credentials](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/).
 
-Note that the gem is named `sonic-ssh` but the command is `sonic`.
+Note that the gem is named `sonic-screwdriver` but the command is `sonic`.
 
 ## Requirements
 

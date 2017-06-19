@@ -1,7 +1,6 @@
 ENV['TEST'] = '1'
-
-require 'simplecov'
-SimpleCov.start
+# Ensures aws api never called. Fixture home folder does not contain ~/.aws/credentails
+ENV['HOME'] = "spec/fixtures/home"
 
 # Ensures aws api never called. Fixture home folder does not contain ~/.aws/credentails
 ENV['HOME'] = "spec/fixtures/home"

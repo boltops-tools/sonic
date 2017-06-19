@@ -8,7 +8,14 @@ module Sonic
       def mute=(v)
         @@mute=v
       end
+
+      @@noop = false
+      def noop=(v)
+        @@noop=v
+      end
+
       def say(msg='')
+        msg = "NOOP: #{msg}" if @@noop
         puts msg unless mute
       end
       def error(msg='')
