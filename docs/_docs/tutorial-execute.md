@@ -31,7 +31,7 @@ $
 Sometimes you might want to run more than just a one-liner command. If you need to run a full script, you can provide the file path to the script by desonating it with `file://`.  For example, here's a file called `hi.sh`:
 
 ```bash
-#!/bin/bbash
+#!/bin/bash
 echo "hello world"
 ```
 
