@@ -4,7 +4,7 @@ title: ECS Exec
 
 In the previous section we showed you how to use `sonic ssh` to quickly ssh into an instance.  Some of the identifiers used were ECS identifiers.  As you can see sonic is ECS smart.
 
-One of the things `sonic` can do is go from your local machine, ssh into an EC2 Container Instance, find the running docker instance and jump into the docker container via `docker exec`.
+One of the additional things `sonic` can do is go from your local machine, ssh into an EC2 Container Instance, find the running docker instance and jump into the docker container via `docker exec`.
 
 It does this with a variety of scripts and trickery and is covered in [How It Works]({% link _docs/how-it-works.md %}).  Let's go through examples of how sonic can help you get into an running ECS docker container quickly.
 

@@ -2,7 +2,7 @@
 title: Settings
 ---
 
-You can adjust the behavior of sonic and set some handy default values with `settings.yml` files.  There can exist multiple settings files which get loaded and merged. The options from the files follow the the following precedence rules:
+You can adjust the behavior of sonic and set some handy default values with `settings.yml` files.  There can exist multiple settings files which all get loaded and merged. The options from the files follow the following precedence rules:
 
 1. project - The project's `.sonic/settings.yml` values take the highest precedence.
 2. user - The user's `~/.sonic/settings.yml` values take the second highest precedence.
@@ -33,11 +33,11 @@ host_key_check  | Controls whether or not use the strict host checking ssh optio
 service_cluster  | Service to cluster mapping.  This is a Hash structure that maps the service name to cluster names. | (no value)
 user  | User to ssh into the server with. This can be overriden at the CLI with the user@host notation but can be set in the settings.yml file also. | ec2-user
 
-The default settings are located within the package tool at [lib/sonic/default/settings.yml](https://github.com/boltopslabs/sonic/blob/master/lib/sonic/default/settings.yml).
+The default settings are located tool source code at [lib/sonic/default/settings.yml](https://github.com/boltopslabs/sonic/blob/master/lib/sonic/default/settings.yml).
 
 ### Service to Cluster Mapping
 
-One of the useful options is the `service_clsuter`.  This option maps service names to cluster names.  This saves you from  typing the `--cluster` option over and over.  Here is an example `~/.sonic/settings.yml`:
+One of the useful options is the `service_cluster`.  This option maps service names to cluster names.  This saves you from  typing the `--cluster` option over and over.  Here is an example `~/.sonic/settings.yml`:
 
 ```yaml
 user: ec2-user

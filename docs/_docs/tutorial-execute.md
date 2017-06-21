@@ -16,7 +16,7 @@ Let's do something more useful:
 sonic execute hi-web-stag yum install -y curl
 ```
 
-The output of the commands ran are showed in the EC2 Run Command Console.  Here's an example:
+The output of the command will show a useful `aws ssm list-commands` command to get status of the requested command.
 
 ```
 $ sonic execute hi-web-stag uptime
@@ -26,9 +26,13 @@ Pro tip: the aws ssm command is already in your copy/paste clipboard.
 $
 ```
 
+The output of the commands ran are also showed in the EC2 Run Command Console.  Here's an example:
+
+<img src="/img/tutorials/ec2-console-run-command.png" class="doc-photo" />
+
 ### Run Scripts
 
-Sometimes you might want to run more than just a one-liner command. If you need to run a full script, you can provide the file path to the script by desonating it with `file://`.  For example, here's a file called `hi.sh`:
+Sometimes you might want to run more than just a one-liner command. If you need to run a full script, you can provide the file path to the script by designating it with `file://`.  For example, here's a file called `hi.sh`:
 
 ```bash
 #!/bin/bash

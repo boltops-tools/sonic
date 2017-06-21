@@ -148,8 +148,10 @@ ul.tools li {
     margin-bottom: 15px;
 }
 
-table.ship-options td:first-child {
-    white-space: nowrap;
+@media(min-width:992px) {
+    table.ship-options td:first-child {
+        white-space: nowrap;
+    }
 }
 
 .keyboard-tip {

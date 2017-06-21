@@ -35,7 +35,7 @@ In order for the `sonic ecs-*` commands to work `jq` is required on the server s
 One way to install `jq` quickly is by using the `sonic execute` command.  For example:
 
 ```sh
-sonic execute -f hi-web-stag yum install -y jq
+sonic execute hi-web-stag yum install -y jq
 ```
 
 It is recommended that you install `jq` with the UserData script or bake it into the AMI though.
@@ -64,7 +64,7 @@ You can verify the instances that have successfully checked into SSM with `aws s
 aws ssm describe-instance-information --output text --query "InstanceInformationList[*]"
 ```
 
-Here's an exmaple of the output:
+Here's an example of the output:
 
 ```sh
 $ aws ssm describe-instance-information --output text --query "InstanceInformationList[*]"

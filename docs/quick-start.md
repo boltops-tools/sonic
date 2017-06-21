@@ -24,10 +24,10 @@ sonic ecs-exec hi-web-stag
 sonic ecs-run hi-web-stag
 
 # run command on 1 instance
-sonic execute -f i-0f7f833131a51ce35 uptime
+sonic execute i-0f7f833131a51ce35 uptime
 
 # run command on all instances tagged with hi-web-stag and worker
-sonic execute -f hi-web-stag,hi-worker-stag uptime
+sonic execute hi-web-stag,hi-worker-stag uptime
 
 # list ec2 instances
 sonic list hi-web-stag

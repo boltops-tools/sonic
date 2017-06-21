@@ -2,15 +2,15 @@
 title: Bastion Setup
 ---
 
-It is common to secure your network setup by restricting access to most servers placing them in internal network subnets.  In this case you will have a bastion host server that you must use to jump from to get to your instance. Sonic provides built-in support for the bastion host.
+It is common to secure your network setup by restricting access to your servers by placing them in internal subnets.  In this case you will have a bastion host server that you must use to jump through to get to your instance. Sonic provides built-in support for a bastion host.
 
-You can configure the `settings.yml` file again to use a bastion host. Here's an example:
+You can configure the [settings.yml]({% link _docs/settings.md %}) file to use a bastion host. Here's an example:
 
 ```yaml
 bastion: bastion.mydomain.com
 ```
 
-This directs the `sonic ssh` to use a jump through the bastion host. The sonic commands are exactly the same though; it is nicely transparent. Example:
+This directs the `sonic ssh` to jump through the bastion host. This works completely transparently. The sonic commands are exactly the same as if there is no bastion host.
 
 ```
 sonic ssh i-0f7f833131a51ce35
@@ -28,9 +28,7 @@ Connection to 34.211.223.3 closed.
 $
 ```
 
-Notice that the ssh command produced has the bastion jump host daisy chained in the command for you.
-
-You can also specify the bastion host as a CLI option with `--bastion`, though it is recommended that you configure it in a `settings.yml` file so you don't have to type it repeatedly.
+You can also specify the bastion host as a CLI option with `--bastion`, though it is recommended that you configure it in a `settings.yml` file so you do not have to repeatedly type it.
 
 <a id="prev" class="btn btn-basic" href="{% link _docs/install.md %}">Back</a>
 <a id="next" class="btn btn-primary" href="{% link _docs/tutorial.md %}">Next Step</a>

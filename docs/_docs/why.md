@@ -2,7 +2,7 @@
 title: Why Sonic Was Created
 ---
 
-After I exhaust debugging an ECS service with CloudWatch Logs I usually take it to the the next step: ssh into the instance. I jump into an instance with a running task or docker container and poke around to figure out the root issue.
+After I exhaust debugging an ECS service with CloudWatch Logs I usually take it to the next step: ssh into the instance. I jump into an instance with a running task or docker container and poke around to figure out the root issue.
 
 In order to find the instance with the service's docker container I click around on the ECS console website until I find the container instance's DNS name and then paste it to the terminal. While this process is not complicated, it is tedious.  For example, the typical process is:
 

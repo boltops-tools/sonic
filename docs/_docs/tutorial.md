@@ -2,7 +2,7 @@
 title: Tutorial
 ---
 
-In the next sections, we'll walk through using sonic in detail. It turns out that easiest way to actually explain the different uses of sonic is to actually use it.
+In the next sections, we'll walk through using sonic in detail. The easiest way to learn and understand sonic is to actually use it.
 
 Let's start!
 

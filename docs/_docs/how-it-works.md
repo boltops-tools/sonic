@@ -4,7 +4,7 @@ title: How It Works
 
 ### Internals
 
-The process that I outline in the [Why]({% link _docs/why.md %}) about clicking around is close to the logic that actually takes place in the tool but it is actually slightly different. Here's an overview of what actually happens internally for those who are interested.
+The process that I outline in the [Why]({% link _docs/why.md %}) about clicking around is close to the logic that actually takes place in the tool. Here's an overview of what actually happens internally for those who are interested.
 
 Steps:
 
@@ -17,9 +17,9 @@ Steps:
 7. Use the ecs metadata and pass it the task_arn from step 2. This will provide the map to the container id.
 8. Run docker command
     1. docker exec -ti CONTAINER_ID `options[:command]`
-    2. docker run `options[:run_options]` IMAGE `options[:command]`
+    2. docker run -ti IMAGE `options[:command]`
 
-In order to pass info over from your local machine to the container instance a file is generated and copied in step 5. File contains:
+In order to pass info over from your local machine to the container instance a file is generated and copied in step 5. The file contains:
 
 * Options all the way from the original cli call like command to run. This is in json form.
 A bash script is also copied.
