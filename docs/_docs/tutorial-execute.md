@@ -18,7 +18,7 @@ sonic execute hi-web-stag yum install -y curl
 
 The output of the command will show a useful `aws ssm list-commands` command to get status of the requested command.
 
-```
+```sh
 $ sonic execute hi-web-stag uptime
 Command sent to AWS SSM. To check the details of the command:
 aws ssm list-commands --command-id 4133e5eb-aa18-40dd-be25-a176eb15e515
@@ -29,6 +29,12 @@ $
 The output of the commands ran are also showed in the EC2 Run Command Console.  Here's an example:
 
 <img src="/img/tutorials/ec2-console-run-command.png" class="doc-photo" />
+
+You can execute a command with a list of filters seprated by commas. For example, this will run the uptime command on any server with a tag value of hi-web-stag,hi-clock-stag, or hi-worker-stag.
+
+```sh
+sonic execute hi-web-stag,hi-clock-stag,hi-worker-stag uptime
+```
 
 ### Run Scripts
 
