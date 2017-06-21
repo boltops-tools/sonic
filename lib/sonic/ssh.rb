@@ -104,7 +104,7 @@ private
     # -t = Force pseudo-terminal allocati
     def build_ssh_command
       ssh = ["ssh"] + ssh_options
-      ssh += ["-At", bastion_host, "ssh"] if @bastion
+      ssh += ["-At", bastion_host, "ssh"] + ssh_options if @bastion
       # ssh_host is internal ip when bastion is set
       # ssh_host is public ip when bastion is not set
       ssh += ["-At", ssh_host]

@@ -13,4 +13,5 @@ module Sonic
   autoload :Settings, 'sonic/settings'
   autoload :Ssh, 'sonic/ssh'
   autoload :UI, 'sonic/ui'
+  autoload :Checks, 'sonic/checks'
 end

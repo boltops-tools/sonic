@@ -2,6 +2,8 @@ require 'fileutils'
 
 module Sonic
   class Docker < Ssh
+    include Checks
+
     def exec
       call("/tmp/sonic/bash_scripts/docker-exec.sh")
     end
@@ -88,7 +90,7 @@ module Sonic
     #   * image
     def create_container_data
       # For container env_vars and image info.
-      task_definition_arn = task.task_definition_arn # task is a method in the superclass: Ssh
+      task_definition_arn = first_task.task_definition_arn # task is a method in the superclass: Ssh
       response = ecs.describe_task_definition(task_definition: task_definition_arn)
       task_definition = response.to_h[:task_definition]
       container_definition = task_definition[:container_definitions].first # assumes care about the first container definition

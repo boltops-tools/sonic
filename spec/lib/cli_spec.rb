@@ -17,12 +17,12 @@ describe Sonic::CLI do
     end
 
     it "execute should print that command has been sent" do
-      out = execute("bin/sonic execute #{@args} --filter 1,2,3 uptime")
+      out = execute("bin/sonic execute #{@args} 1,2,3 uptime")
       expect(out).to include("Command sent")
     end
 
     it "list should list running instances" do
-      out = execute("bin/sonic list #{@args} --filter 1,2,3 --header")
+      out = execute("bin/sonic list #{@args} 1,2,3 --header")
       expect(out).to include("Instance Id")
     end
   end

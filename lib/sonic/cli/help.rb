@@ -94,13 +94,14 @@ EOL
 
         def execute
 <<-EOL
-Run as a command across a list of servers. A filter must be provided.  The filter can be a mix of instance ids and ec2 tags. sonic execute will auto-detect the what type of filter it is and send it properly to EC2 Run Command.
+Run as a command across a list of servers. A filter must be provided.  The filter can be a mix of instance ids and ec2 tags. This command can also take a path to a file. To specify a path to a file use file:// at the beginning of your file.
 
 Examples:
 
-$ sonic execute --filter hi-web-prod uptime
-$ sonic execute --filter hi-web-prod,hi-worker-prod,hi-clock-prod uptime
-$ sonic execute --filter i-030033c20c54bf149,i-030033c20c54bf150 uname -a
+$ sonic execute hi-web-prod uptime
+$ sonic execute hi-web-prod,hi-worker-prod,hi-clock-prod uptime
+$ sonic execute i-030033c20c54bf149,i-030033c20c54bf150 uname -a
+$ sonic execute i-030033c20c54bf149 file://hello.sh
 
 You cannot mix instance ids and tag names in the filter.
 EOL
@@ -113,13 +114,13 @@ List ec2 servers. A filter must be provided.  The filter can be a mix of instanc
 Examples:
 
 $ sonic list
-$ sonic list --filter hi-web-prod
-$ sonic list --filter hi-web-prod,hi-clock-prod
-$ sonic list --filter i-09482b1a6e330fbf7
+$ sonic list hi-web-prod
+$ sonic list hi-web-prod,hi-clock-prod
+$ sonic list i-09482b1a6e330fbf7
 
 Example Output:
 
-$ sonic list --filter i-09482b1a6e330fbf7 --header
+$ sonic list i-09482b1a6e330fbf7 --header
 Instance Id Public IP Private IP  Type
 i-09482b1a6e330fbf7 54.202.152.168  172.31.21.108 t2.small
 $

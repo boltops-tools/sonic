@@ -8,17 +8,27 @@ module Sonic
     end
 
     def run
-      options = transform_filter_option(@filter)
+      filter_options = transform_filter_option(@filter)
       if @options[:noop]
         instances = []
       else
-        instances = ec2_resource.instances(options)
+        begin
+          instances = ec2_resource.instances(filter_options)
+          instances.count # force eager loading
+        rescue Aws::EC2::Errors::InvalidInstanceIDNotFound => e
+          # ERROR: The instance ID 'i-066b140d9479e9682' does not exist
+          UI.error(e.message)
+          exit 1
+        end
       end
       display(instances)
     end
 
     def display(instances)
-      if @options[:header]
+      zero_instances = instances.count == 0
+      UI.say("No instances found with the filter #{@filter.join('')}") if zero_instances
+
+      if @options[:header] && !zero_instances
         UI.say "Instance Id\tPublic IP\tPrivate IP\tType".colorize(:green)
       end
 
