@@ -69,5 +69,5 @@ sonic ssh hi-worker-stag --cluster stag
 
 
 <a id="prev" class="btn btn-basic" href="{% link _docs/tutorial-execute.md %}">Back</a>
-<a id="next" class="btn btn-primary" href="{% link _docs/why.md %}">Next Step</a>
+<a id="next" class="btn btn-primary" href="{% link _docs/help.md %}">Next Step</a>
 <p class="keyboard-tip">Pro tip: Use the <- and -> arrow keys to move back and forward.</p>

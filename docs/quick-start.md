@@ -15,6 +15,7 @@ brew cask install boltopslabs/software/bolts
 ```sh
 # ssh into an instance
 sonic ssh i-0f7f833131a51ce35
+sonic ssh hi-web-stag
 
 # docker exec to a running ECS docker container
 sonic ecs-exec hi-web-stag

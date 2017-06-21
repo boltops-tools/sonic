@@ -2,7 +2,7 @@
 title: ECS Run
 ---
 
-The nice thing about the previous `ecs-exec` command we covered is that it allows you to get into the actual running container and debug with the exact enviornment that is on production.  The cavaet with doing this is that we are affecting a live process in actual use. If you do something inadvertently wrong on the server it could affect users.  Sometimes it is nice to start up a new container with the exact same environment as the other running containers but be isolated so you cannot affect live requests.
+The nice thing about the previous `ecs-exec` command we covered is that it allows you to get into the actual running container and debug with the exact environment that is on production.  The cavaet with doing this is that we are affecting a live process in actual use. If you do something inadvertently wrong on the server it could affect users.  Sometimes it is nice to start up a new container with the exact same environment as the other running containers but be isolated so you cannot affect live requests.
 
 ### sonic ecs-run
 
@@ -35,7 +35,7 @@ Connection to 34.211.195.71 closed.
 $
 ```
 
-In the above output a WEBrick server gets started.  The reason this happens is because the Dockerfile default `CMD` in this project happens to start a webserver.  Most of the time you probably want shell to debug.  To start a bash shell just tack the bash command at the end.
+In the above output a WEBrick server gets started.  The reason this happens is because the Dockerfile default `CMD` in this project happens to start a webserver.  Most of the time you probably want to start shell for debugging.  To start a bash shell just tack the bash command at the end.
 
 ```sh
 $ sonic ecs-run hi-web-stag bash
@@ -46,7 +46,7 @@ Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 root@56a495dbd5cd:/app#
 ```
 
-You are now in a docker container running exactly the same environment as the other running containers with the `hi-web-stag` service. While this looks similiar to the `ecs-exec` command this is docker container is a new process and is isolated from any live request. You can do whatever you want to this container and experiment to your heart's content.
+You are now in a docker container running exactly the same environment as the other running containers with the `hi-web-stag` service. While this looks similiar to the `ecs-exec` command this container is a brand new process and is isolated from any live request. You can do whatever you want in this container and experiment to your heart's content.
 
 We can prove that this is a brand new docker container that is outside of ECS' knowledge. Let's ssh into the same instance and take a look at all the running docker containers in another terminal.
 
@@ -61,7 +61,7 @@ bf646ae7789a        amazon/amazon-ecs-agent:latest                 "/agent"     
 $
 ```
 
-The output shows that there is this extra runnning container called `cocky_goldstine`.  This name does not look like the typical ECS managed running docker container: `ecs-hi-web-stag-11-web-9eb081978abad89a9701`
+The output shows that there is this extra runnning container called `cocky_goldstine`.  This name does not look like the typical ECS managed running docker container: `ecs-hi-web-stag-11-web-9eb081978abad89a9701`.  This is how we know that this is a container outside of ECS control.
 
 ```sh
 $ sonic ecs-run hi-web-stag bash
@@ -75,7 +75,7 @@ Connection to 34.211.195.71 closed.
 $
 ```
 
-Let's exit out of the first terminate where you ran the original `sonic ecs-run` command and then list the running containers again.
+Let's exit out of the first terminal where you ran the original `sonic ecs-run` command and then list the running containers again.
 
 ```sh
 $ sonic ssh hi-web-stag docker ps
@@ -87,7 +87,7 @@ bf646ae7789a        amazon/amazon-ecs-agent:latest                 "/agent"     
 $
 ```
 
-Zapped!  The container that was created with `sonic ecs-run` is no more.
+Zapped!  The `cocky_goldstine` container that was created with `sonic ecs-run` is no more.
 
 <a id="prev" class="btn btn-basic" href="{% link _docs/tutorial-ecs-exec.md %}">Back</a>
 <a id="next" class="btn btn-primary" href="{% link _docs/tutorial-execute.md %}">Next Step</a>

@@ -2,11 +2,11 @@
 title: ECS Exec
 ---
 
-In the previous section we showed you how to use `sonic ssh` to quickly ssh into an instance.  Some of the identifiers used were ECS identifiers.  As you can see sonic is very much ECS aware.  It was built with ECS in mind.
+In the previous section we showed you how to use `sonic ssh` to quickly ssh into an instance.  Some of the identifiers used were ECS identifiers.  As you can see sonic is ECS smart.
 
 One of the things `sonic` can do is go from your local machine, ssh into an EC2 Container Instance, find the running docker instance and jump into the docker container via `docker exec`.
 
-It does this with a variety of scripts and trickery and is covered in [How It Works]({% link _docs/how-it-works.md %}).  Let's through examples of how sonic can help you get into an docker container running on ECS quickly.
+It does this with a variety of scripts and trickery and is covered in [How It Works]({% link _docs/how-it-works.md %}).  Let's go through examples of how sonic can help you get into an running ECS docker container quickly.
 
 ### sonic ecs-exec
 
@@ -31,7 +31,7 @@ Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 root@fc4035f90bdc:/app#
 ```
 
-What you see above is a bash shell within the docker container!  With one command you have placed yourself into the running container 🎉
+What you see in the last line above is a bash prompt because you are in a bash shell within the docker container!  With one command you have placed yourself into the running container 🎉
 
 As mentioned in the [previous section]({% link _docs/tutorial-ssh.md %}) and also in the [Settings documentation]({% link _docs/settings.md %}) you can configure a `~/.sonic/settings.yml` file which shortens the command further.  Let's add this to your settings:
 

@@ -30,7 +30,7 @@ gem "sonic-screwdriver"
 
 #### sonic ecs-* dependencies
 
-In order for the `sonic ecs-*` trickery to work `jq` is used on the server side.  This is covered in the [How It Works]({% link _docs/how-it-works.md %}) section. So you must have `jq` installed on the servers for the `sonic ecs-*` commands to work.
+In order for the `sonic ecs-*` commands to work `jq` is required on the server side. This is covered in the [How It Works]({% link _docs/how-it-works.md %}) section.
 
 One way to install `jq` quickly is by using the `sonic execute` command.  For example:
 
@@ -42,11 +42,17 @@ It is recommended that you install `jq` with the UserData script or bake it into
 
 #### sonic execute dependencies
 
-The `sonic execute` works alongside [Amazon EC2 Run Command](https://aws.amazon.com/ec2/execute/).  So this is the required to be installed on the servers for `sonic execute` to work.
+The `sonic execute` works alongside [Amazon EC2 Run Command](https://aws.amazon.com/ec2/execute/).  So it is required to be installed on the servers for `sonic execute` to work.
 
 #### Amazon EC2 Run Manager Installation
 
-Installing the EC2 Run Manager agent on your linux servers is super simple and often only one command.  The recommended instructions are the offical Amazon EC2 Systems Manager [Install SSM Agent](http://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) documentation.
+Installing the EC2 Run Manager agent on your linux servers is super simple and is only one command.
+
+```sh
+sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+```
+
+The full recommended instructions are on the offical Amazon EC2 Systems Manager [Install SSM Agent](http://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) documentation.
 
 The trickest part of installing is likely making sure that the agent on the server has successfully checked into the SSM service.  Verify it by tailing `/var/log/amazon/ssm/errors/errors.log`.
 
