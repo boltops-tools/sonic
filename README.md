@@ -1,5 +1,7 @@
 # Sonic
 
+[![CircleCI](https://circleci.com/gh/boltopslabs/sonic.svg?style=svg)](https://circleci.com/gh/boltopslabs/sonic)
+
 Sonic is a multi-functional tool that helps you manage AWS resources. Sonic contains is a group of commands that help debug EC2 instances and ECS containers quickly.
 
 ## Why Sonic Was Created
