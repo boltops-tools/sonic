@@ -69,6 +69,8 @@ sonic list hi-web-stag
 
 ## Contributing
 
+Everyone can contribute to make sonic-screwdriver better.  Please fork the project and open a pull request! We love your pull requests. Contributions are encouraged and welcomed!
+
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
