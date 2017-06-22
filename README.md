@@ -1,4 +1,4 @@
-# Sonic
+# Sonic Screwdriver
 
 [![CircleCI](https://circleci.com/gh/boltopslabs/sonic.svg?style=svg)](https://circleci.com/gh/boltopslabs/sonic)
 
