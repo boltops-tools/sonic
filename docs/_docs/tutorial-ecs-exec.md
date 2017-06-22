@@ -4,7 +4,7 @@ title: ECS Exec
 
 In the previous section we showed you how to use `sonic ssh` to quickly ssh into an instance.  Some of the identifiers used were ECS identifiers.  As you can see sonic is ECS smart.
 
-One of the additional things `sonic` can do is go from your local machine, ssh into an EC2 Container Instance, find the running docker instance and jump into the docker container via `docker exec`.
+One of the additional things `sonic` can do is hop one more level and get you all the way to the running docker container via `docker exec`.
 
 It does this with a variety of scripts and trickery and is covered in [How It Works]({% link _docs/how-it-works.md %}).  Let's go through examples of how sonic can help you get into an running ECS docker container quickly.
 
@@ -31,7 +31,35 @@ Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 root@fc4035f90bdc:/app#
 ```
 
-What you see in the last line above is a bash prompt because you are in a bash shell within the docker container!  With one command you have placed yourself into the running container 🎉
+What you see in the last line above is a bash prompt because you are in a bash shell within the docker container!  Ultimately sonic runs runs a `docker exec -ti ECS_SERVICE_CONTAINER bash` after ssh-ing into the instance.  With one command you have placed yourself into the running container 🎉
+
+Here are examples to show what is possible:
+
+```
+$ sonic ecs-exec hi-web-stag bash
+# You're in the docker container now
+$ ls # check out some files to make sure you're the right place
+$ ps auxxx | grep puma # is the web process up?
+$ env # are the environment variables properly set?
+$ bundle exec rails c # start up a rails console to debug
+```
+
+You can also pass in bundle exec rails console if you want to get to that as quickly as possible.
+
+```
+$ sonic ecs-exec hi-web-stag bundle exec rails console
+# You're a rails console in the docker container now
+> User.count
+```
+
+You can also use the container instance id or instance id in place of the service name:
+
+```
+sonic ecs-exec 9f1dadc7-4f67-41da-abec-ec08810bfbc9 bash
+sonic ecs-exec i-006a097bb10643e20 bash
+```
+
+### Settings - service_cluster
 
 As mentioned in the [previous section]({% link _docs/tutorial-ssh.md %}) and also in the [Settings documentation]({% link _docs/settings.md %}) you can configure a `~/.sonic/settings.yml` file which shortens the command further.  Let's add this to your settings:
 

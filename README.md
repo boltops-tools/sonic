@@ -4,6 +4,8 @@
 
 Sonic is a multi-functional tool that helps you manage AWS resources. Sonic contains is a group of commands that help debug EC2 instances and ECS containers quickly.
 
+See [sonic-screwdriver.cloud](http://sonic-screwdriver.cloud) for full documentation.
+
 ## Why Sonic Was Created
 
 After I exhaust debugging an ECS service with CloudWatch Logs I usually take it to the next step: ssh into the instance. I jump into an instance with a running task or docker container and poke around to figure out the root issue.
@@ -26,149 +28,44 @@ By the time I get into the container, I need to remind my brain on what the orig
 
 ## Install
 
-### Install Via RubyGems
+If you want to quickly install sonic without having to worry about sonic's dependencies you can simply install the Bolts Toolbelt which has sonic included.
 
-```
-gem install sonic-screwdriver
-```
-
-Set up your AWS credentials at `~/.aws/credentials` and `~/.aws/config`.  This is the [AWS standard way of setting up credentials](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/).
-
-Note that the gem is named `sonic-screwdriver` but the command is `sonic`.
-
-## Requirements
-
-* [jq](https://stedolan.github.io/jq/manual/) - a lightweight and flexible command-line JSON processor
-
-If you are also using the `ecs-exec` and `ecs-run` commands, then you will need to ensure that [jq](https://stedolan.github.io/jq/) is installed on all of your ECS container instances.  If you are only using the `sonic ssh` command then you do not need the jq dependency.
-
-## Usage
-
-### sonic ssh
-
-To ssh into the host or container instance where an ECS service called `my-service` is running, simply run:
-
-```
-$ sonic ssh my-service --cluster my-cluster
-# now you are on the container instance
-$ docker ps
-$ curl -s http://localhost:51678/v1/meta | jq .
+```sh
+brew cask install boltopslabs/software/bolts
 ```
 
-The `my-service` can possible run on multiple container instances.  The `sonic` command chooses the first container instance that it finds.  If you need to ssh into a specific container instance, use `sonic ssh` instead.
+Or if you prefer you can install ufo with RubyGems
 
-You can also use the instance id, container instance arn or task arn to ssh into the machine.  Examples:
-
-```
-$ sonic ssh my-ecs-service --cluster my-cluster # cluster is required or ~/.sonic/settings.yml
-$ sonic ssh i-067c5e3f026c1e801
-$ sonic ssh 7fbc8c75-4675-4d39-a5a4-0395ff8cd474
-$ sonic ssh 1ed12abd-645c-4a05-9acf-739b9d790170
+```sh
+gem install ufo
 ```
 
-### sonic ecs-exec
+Full installation instructions are at [Install Sonic Screwdriver](http://localhost:4000/docs/install/).  There are some server side dependencies for some of the sonic commands so it is important to read through the full installation guide.
 
-`sonic ecs-exec` will hop one more level and get you all the way into a live container for a service.  To quickly get yourself into a docker exec bash shell for a service:
+## Quick Start
 
+Here is a quick overview of sonic abilities:
+
+```sh
+# ssh into an instance
+sonic ssh i-0f7f833131a51ce35
+sonic ssh hi-web-stag
+
+# docker exec to a running ECS docker container
+sonic ecs-exec hi-web-stag
+
+# docker run with same environment as the ECS docker running containers
+sonic ecs-run hi-web-stag
+
+# run command on 1 instance
+sonic execute i-0f7f833131a51ce35 uptime
+
+# run command on all instances tagged with hi-web-stag and worker
+sonic execute hi-web-stag,hi-worker-stag uptime
+
+# list ec2 instances
+sonic list hi-web-stag
 ```
-$ sonic ecs-exec SERVICE bash
-$ sonic ecs-exec SERVICE # same as above, defaults to bash shell
-```
-
-This ultimately runs the following command after it ssh into the container instance:
-
-```
-$ docker run -ti SERVICE_CONTAINER bash
-```
-
-Here are examples to show what is possible:
-
-```
-$ sonic ecs-exec my-service bash
-# You're in the docker container now
-$ ls # check out some files to make sure you're the right place
-$ ps auxxx | grep puma # is the web process up?
-$ env # are the environment variables properly set?
-$ bundle exec rails c # start up a rails console to debug
-```
-
-You can also pass in bundle exec rails console if you want to get to that as quickly as possible.
-
-```
-$ sonic ecs-exec my-service 'bundle exec rails console'
-# You're a rails console in the docker container now
-> User.count
-```
-
-You must put commands with spaces in quotes.
-
-You can also use the container instance id or instance id in place of the service name:
-
-```
-$ sonic ecs-exec 9f1dadc7-4f67-41da-abec-ec08810bfbc9 bash
-$ i-006a097bb10643e20
-```
-
-### sonic ecs-run
-
-The `sonic ecs-run` command is similar to the `sonic ecs-exec` command except it'll run a brand new container with the same environment variables as the task associated with the service. This allows you to debug in a container with the exact environment variables as the running tasks/containers without affecting the live service. So this is safer since you will not be able to mess up a live container that is in service.
-
-This also allows you to run one off commands like a rake task. Here's an example:
-
-```
-sonic ecs-run my-service bundle exec 'rake do:something'
-```
-
-The default command opens up a bash shell.
-
-```
-sonic ecs-run my-service # start a bash shell
-sonic ecs-run my-service bash # same thing
-```
-
-## Settings
-
-A `~/.sonic/settings.yml` file is useful to adjust the behavior of sonic. One of the useful options is the `service_clsuter`.  This optoin maps services to clusters.  This saves you from  typing the `--cluster` option every time.  Here is an example `~/.sonic/settings.yml`:
-
-```yaml
-service_cluster:
-  default: my-default-cluster
-  hi-web-prod: prod
-  hi-clock-prod: prod
-  hi-worker-prod: prod
-  hi-web-stag: stag
-  hi-clock-stag: stag
-  hi-worker-stag: stag
-```
-
-This results in shorter commands:
-
-```
-sonic ssh hi-web-prod
-sonic ssh hi-clock-prod
-sonic ssh hi-worker-stag
-```
-
-Instead of what you normally would have to type:
-
-```
-sonic ssh hi-web-prod --cluster prod
-sonic ssh hi-clock-prod --cluster prod
-sonic ssh hi-worker-stag --cluster stag
-```
-
-## Help and CLI Options
-
-```
-sonic help
-sonic help ssh
-sonic help ecs-exec
-sonic help ecs-run
-```
-
-## Internals
-
-If are interested in the internal logic to achieve what the sonic commands it is detailed on the [wiki](https://github.com/boltopslabs/sonic/wiki).
 
 ## Contributing
 

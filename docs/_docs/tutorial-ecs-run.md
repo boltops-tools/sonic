@@ -6,7 +6,7 @@ The nice thing about the previous `ecs-exec` command we covered is that it allow
 
 ### sonic ecs-run
 
-Sonic provides a `sonic ecs-run` command that allows you to start up a new container with the same environment as one of the running containers. Here's an example:
+The `sonic ecs-run` command is similar to the `sonic ecs-exec` command except it'll run a brand new container with the same environment variables as the task associated with the service. This allows you to debug in a container with the exact environment variables as the running tasks/containers without affecting the live service. So this is safer since you will not be able to mess up a live container that is in service.  Here's an example:
 
 ```sh
 sonic ecs-run hi-web-stag

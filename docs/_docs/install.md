@@ -26,7 +26,7 @@ Or you can add sonic to your Gemfile in your project if you are working with a r
 gem "sonic-screwdriver"
 ```
 
-### Additional Server Side Dependencies
+### Server Side Dependencies
 
 #### sonic ecs-* dependencies
 

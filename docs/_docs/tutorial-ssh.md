@@ -46,6 +46,8 @@ user: ec2-user
 
 More information about sonic settings in available in the docs: [Settings]({% link _docs/settings.md %}).
 
+### Different Identifiers
+
 The `sonic ssh` command can auto-detect the proper ip address with a variety of different identifiers.  It is not just limited to the instance id. This is convenient in case you happen to be on a dashboard with another identifer close by and handy.  Here are examples of other identifiers that `sonic ssh` understands.
 
 ```
@@ -68,10 +70,9 @@ service_cluster:
   hi-worker-stag: stag
 ```
 
-With these settings in place, the commands get shorten to become:
+With these settings in place, the ECS identifier commands get shorten to become:
 
 ```sh
-sonic ssh EC2_TAG_VALUE
 sonic ssh ECS_CONTAINER_ID
 sonic ssh ECS_SERVICE
 sonic ssh ECS_TASK_ID
@@ -80,7 +81,19 @@ sonic ssh ECS_TASK_ID
 It then becomes very easy to ssh into an EC2 Container Instance with the ECS service name.  For example if the ECS service name is `hi-web-stag` then the command becomes.
 
 ```sh
-sonic ssh hi-web-stag
+$ sonic ssh hi-web-stag
+# now you are on the container instance
+$ docker ps
+$ curl -s http://localhost:51678/v1/meta | jq .
+```
+
+The `hi-web-stag` can possibly be running on multiple container instances.  The `sonic` command chooses the first container instance that it finds.  If you need to ssh into a specific container instance, use `sonic ssh` instead.
+
+You can also use the ECS container instance arn or task id to ssh into the machine.  Examples:
+
+```
+$ sonic ssh 7fbc8c75-4675-4d39-a5a4-0395ff8cd474 # ECS container id
+$ sonic ssh 1ed12abd-645c-4a05-9acf-739b9d790170 # ECS task id
 ```
 
 ### Bastion Host
