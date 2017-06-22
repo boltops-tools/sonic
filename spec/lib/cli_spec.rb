@@ -12,7 +12,7 @@ describe Sonic::CLI do
 
   describe "sonic" do
     it "ssh should print out ssh command to be ran" do
-      out = execute("bin/sonic ssh my-service #{@args} --cluster default")
+      out = execute("bin/sonic ssh #{@args} --cluster default my-service")
       expect(out).to include("=> ssh")
     end
 
@@ -22,8 +22,8 @@ describe Sonic::CLI do
     end
 
     it "list should list running instances" do
-      out = execute("bin/sonic list #{@args} 1,2,3 --header")
-      expect(out).to include("Instance Id")
+      out = execute("bin/sonic list #{@args} --header 1,2,3")
+      expect(out).to include("No instances found")
     end
   end
 end

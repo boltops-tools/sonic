@@ -42,6 +42,8 @@ module Sonic
     end
 
     def build_ssh_host
+      return @identifier if ENV['TEST']
+
       detector = Ssh::IdentifierDetector.new(@cluster, @service, @identifier, @options)
       instance_id = detector.detect!
       instance_hostname(instance_id)
