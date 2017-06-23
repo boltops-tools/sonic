@@ -29,13 +29,19 @@ module Sonic
       UI.say("No instances found with the filter #{@filter.join('')}") if zero_instances
 
       if @options[:header] && !zero_instances
-        UI.say "Instance Id\tPublic IP\tPrivate IP\tType".colorize(:green)
+        header = ["Instance Id", "Name", "Public IP", "Private IP", "Type"]
+        UI.say header.join("\t").colorize(:green)
       end
 
       instances.each do |i|
-        line = [i.instance_id, i.public_ip_address, i.private_ip_address, i.instance_type].join("\t")
+        line = [i.instance_id, tag_value(i, "Name"), i.public_ip_address, i.private_ip_address, i.instance_type].join("\t")
         UI.say(line)
       end
+    end
+
+    def tag_value(instance, key)
+      tag = instance.tags.find { |i| i.key == key }
+      tag.value
     end
 
     #
