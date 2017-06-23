@@ -46,16 +46,20 @@ user: ec2-user
 
 More information about sonic settings in available in the docs: [Settings]({% link _docs/settings.md %}).
 
-### Different Identifiers
+### Polymorphic Identifiers
 
-The `sonic ssh` command can auto-detect the proper ip address with a variety of different identifiers.  It is not just limited to the instance id. This is convenient in case you happen to be on a dashboard with another identifer close by and handy.  Here are examples of other identifiers that `sonic ssh` understands.
+The `sonic ssh` command can auto-detect the proper ip address with a variety of different identifiers.  The identifier is not just limited to the instance id. The identifier can be also an EC2 tag-value filter, ECS service name, ECS container id or ECS task id.
+
+This is convenient in case you happen to be on a dashboard with another identifer close by and handy.  Here are example usage with identifiers that `sonic ssh` understands.
 
 ```
 sonic ssh EC2_TAG_FILTER
-sonic ssh ECS_CONTAINER_ID --cluster stag
 sonic ssh ECS_SERVICE --cluster stag
+sonic ssh ECS_CONTAINER_ID --cluster stag
 sonic ssh ECS_TASK_ID --cluster stag
 ```
+
+The EC2 tag filter uses the 'tag-value' filter as described in the [AWS describe-instances](http://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html) filter docs. This filter is independent of the tag-key filter, which means any EC2 tag value will match, regardless of the tag key name.  Sonic does not support spaces in the EC2 tag filter.
 
 Notice, that when the `sonic ssh` is passed an ECS identifier then it also requires the ECS cluster name. The commands above with the ECS identifier are normally shorten further by configuring the a [settings]({% link _docs/settings.md %}) file.  Here's an example:
 

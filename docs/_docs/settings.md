@@ -4,7 +4,7 @@ title: Settings
 
 You can adjust the behavior of sonic and set some handy default values with `settings.yml` files.  There can exist multiple settings files which all get loaded and merged. The options from the files follow the following precedence rules:
 
-1. project - The project's `.sonic/settings.yml` values take the highest precedence.
+1. current folder - The current folder's `.sonic/settings.yml` values take the highest precedence. The current folder is typically the project folder.
 2. user - The user's `~/.sonic/settings.yml` values take the second highest precedence.
 3. default - The [default settings](https://github.com/boltopslabs/sonic/blob/master/lib/sonic/default/settings.yml) bundled with the tool takes the lowest precedence.
 
