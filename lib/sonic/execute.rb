@@ -150,11 +150,11 @@ You can use the following command to check registered instances to SSM.
       # it right through
       instances = List.new(@options).instances
       if instances.count == 0
-        message = <<~EOL
-          Unable to find any instances with filter #{@filter.join(',')}.
-          Are you sure you specify the filter with either a EC2 tag or list instance ids?
-          If you are using ECS identifiers, they are not supported with this command.
-        EOL
+        message = <<-EOL
+  Unable to find any instances with filter #{@filter.join(',')}.
+  Are you sure you specify the filter with either a EC2 tag or list instance ids?
+  If you are using ECS identifiers, they are not supported with this command.
+EOL
         UI.warn(message)
       end
       instances.count

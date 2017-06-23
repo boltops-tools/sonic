@@ -19,6 +19,11 @@ section#main img {
     margin: 0 auto 20px;
 }
 
+section#main li img {
+    display: inline;
+    margin: 0;
+}
+
 section#main .intro-text .name {
     display: block;
     text-transform: uppercase;
@@ -111,8 +116,6 @@ ul.tools {
 ul.tools li {
     font-size: 1.3em;
 }
-
-
 
 .btn-xl {
     padding: 20px 40px;
