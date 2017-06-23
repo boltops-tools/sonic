@@ -19,7 +19,8 @@ module Sonic
       default = YAML.load_file(default_file)
 
       @data = default.merge(user.merge(project))
-      ensure_default_cluster(@data)
+      ensure_default_cluster!(@data)
+      ensure_default_bastion!(data)
       @data
     end
 
@@ -55,9 +56,42 @@ module Sonic
     # When user's .sonic/settings.yml lack the default cluster, we add it on.
     # Otherwise the user get confusing and scary aws-sdk-core/param_validator errors:
     # Example: https://gist.github.com/sonic/67b9a68a77363b908d1c36047bc2709a
-    def ensure_default_cluster(data)
+    def ensure_default_cluster!(data)
       unless data["service_cluster"]["default"]
         data["service_cluster"]["default"] = "default"
+      end
+      data
+    end
+
+    # Public: Returns default bastion host.
+    #
+    # cluster  - cluster provided by user
+    #
+    # The settings.yml format:
+    #
+    # bastion:
+    #   default: bastion.mydomain.com
+    #   prod: bastion.mydomain.com
+    #   stag: bastion-stag.mydomain.com
+    #
+    # Examples
+    #
+    #   default_bastion('stag')
+    #   # => 'bastion-stag.mydomain.com'
+    #   default_bastion('whatever')
+    #   # => 'bastion.mydomain.com'
+    #
+    # Returns the bastion host that is mapped to the cluster
+    def default_bastion(cluster)
+      bastion = data["bastion"]
+      bastion[cluster] || bastion["default"]
+    end
+
+    # When user's .sonic/settings.yml lack the default cluster, we add it on.
+    def ensure_default_bastion!(data)
+      unless data["bastion"] && data["bastion"].has_key?("default")
+        data["bastion"] ||= {}
+        data["bastion"]["default"] = nil
       end
       data
     end

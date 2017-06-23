@@ -1,4 +1,8 @@
-bastion: # defaults to nil
+bastion: # cluster_host mapping
+  default: # default is nil - which means a bastion host wont be used
+  # Examples:
+  # prod: bastion.mydomain.com
+  # stag: ubuntu@bastion-stag.mydomain.com
 host_key_check: false
 service_cluster:
   default: # defaults to nil

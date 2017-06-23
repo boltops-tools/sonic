@@ -16,7 +16,7 @@ module Sonic
 
       @service = @identifier # always set service even though it's not always used as the identifier
       @cluster = options[:cluster] || settings.default_cluster(@service)
-      @bastion = options[:bastion] || settings.data["bastion"]
+      @bastion = options[:bastion] || settings.default_bastion(@bastion)
     end
 
     def run

@@ -11,7 +11,11 @@ You can adjust the behavior of sonic and set some handy default values with `set
 Here is an `settings.yml` example:
 
 ```yaml
-bastion: bastion.mydomain.com
+bastion: # cluster_host mapping
+  default: # default is nil - which means a bastion host wont be used
+  # Examples:
+  # prod: bastion.mydomain.com
+  # stag: ubuntu@bastion-stag.mydomain.com
 host_key_check: false
 service_cluster:
   default: # defaults to nil
@@ -28,12 +32,31 @@ The following table covers the different setting options:
 
 Setting  | Description | Default
 ------------- | ------------- | -------------
-bastion  | Bastion host to use as the jump host. Examples: bastion.mydomain.com, myuser@bastion.myuser.com or 123.123.123.123. | (no value)
+bastion  | Bastion mapping allows you to set a bastion host on a per ECS cluster basis.  The bastion host is used as the jump host. Examples: bastion.mydomain.com, myuser@bastion.myuser.com or 123.123.123.123. | (no value)
 host_key_check  | Controls whether or not use the strict host checking ssh option.  Since EC2 server host changes often the default value is false. | false
 service_cluster  | Service to cluster mapping.  This is a Hash structure that maps the service name to cluster names. | (no value)
 user  | User to ssh into the server with. This can be overriden at the CLI with the user@host notation but can be set in the settings.yml file also. | ec2-user
 
 The default settings are located tool source code at [lib/sonic/default/settings.yml](https://github.com/boltopslabs/sonic/blob/master/lib/sonic/default/settings.yml).
+
+### Bastion cluster to host mapping
+
+Provided this example:
+
+```yaml
+bastion: # cluster_host mapping
+  default: ec2-user@bastion.mydomain.com
+  prod: ec2-user@bastion.mydomain.com
+  stag: ubuntu@bastion-stag.mydomain.com
+```
+
+This results in
+
+```sh
+sonic ssh --cluster prod [IDENTIFER] # ec2-user@bastion.mydomain.com used as the bastion host
+sonic ssh --cluster stag [IDENTIFER] # ubuntu@bastion-stag.mydomain.com used as the bastion host
+sonic ssh --cluster whatever [IDENTIFER] # ec2-user@bastion.mydomain.com used as the bastion host
+```
 
 ### Service to Cluster Mapping
 
