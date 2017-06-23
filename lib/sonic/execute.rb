@@ -20,6 +20,7 @@ module Sonic
       if @options[:noop]
         UI.noop = true
         command_id = "fake command id"
+        success = true # fake it for specs
       else
         instances_count = check_instances
         return unless instances_count > 0
@@ -49,50 +50,6 @@ module Sonic
           "commands" => command
         }
       )
-    end
-
-    def build_command(command)
-      if file_path?(command)
-        path = file_path(command)
-        if File.exist?(path)
-          IO.readlines(path).map {|s| s.strip}
-        else
-          UI.error("File #{path} could not be found. Are you sure it exist?")
-          exit 1
-        end
-      else
-        # The script is being feed inline so just join the command together into one script.
-        # Still keep in an array form because that's how ssn.send_command works with AWS-RunShellScript
-        # usually reads the command.
-        [command.join(" ")]
-      end
-    end
-
-    # e = Aws::SSM::Errors::InvalidInstanceId
-    def ssm_invalid_instance_error_message(e)
-      # e.message is an empty string so not very helpful
-      ssm_describe_command = 'aws ssm describe-instance-information --output text --query "InstanceInformationList[*]"'
-      message = <<-EOS
-One of the instance ids: #{@filter.join(",")} is invalid according to SSM.
-This might be because the SSM agent on the instance has not yet checked in.
-You can use the following command to check registered instances to SSM.
-#{ssm_describe_command}
-      EOS
-      UI.warn(message)
-      copy_paste_clipboard(ssm_describe_command)
-    end
-
-    def file_path?(command)
-      return false unless command.size == 1
-      possible_path = command.first
-      possible_path.include?("file://")
-    end
-
-    def file_path(command)
-      path = command.first
-      path = path.sub('file://', '')
-      path = "#{@options[:project_root]}/#{path}" if @options[:project_root]
-      path
     end
 
     #
@@ -138,6 +95,50 @@ You can use the following command to check registered instances to SSM.
       else
         true
       end
+    end
+
+    def build_command(command)
+      if file_path?(command)
+        path = file_path(command)
+        if File.exist?(path)
+          IO.readlines(path).map {|s| s.strip}
+        else
+          UI.error("File #{path} could not be found. Are you sure it exist?")
+          exit 1
+        end
+      else
+        # The script is being feed inline so just join the command together into one script.
+        # Still keep in an array form because that's how ssn.send_command works with AWS-RunShellScript
+        # usually reads the command.
+        [command.join(" ")]
+      end
+    end
+
+    # e = Aws::SSM::Errors::InvalidInstanceId
+    def ssm_invalid_instance_error_message(e)
+      # e.message is an empty string so not very helpful
+      ssm_describe_command = 'aws ssm describe-instance-information --output text --query "InstanceInformationList[*]"'
+      message = <<-EOS
+One of the instance ids: #{@filter.join(",")} is invalid according to SSM.
+This might be because the SSM agent on the instance has not yet checked in.
+You can use the following command to check registered instances to SSM.
+#{ssm_describe_command}
+      EOS
+      UI.warn(message)
+      copy_paste_clipboard(ssm_describe_command)
+    end
+
+    def file_path?(command)
+      return false unless command.size == 1
+      possible_path = command.first
+      possible_path.include?("file://")
+    end
+
+    def file_path(command)
+      path = command.first
+      path = path.sub('file://', '')
+      path = "#{@options[:project_root]}/#{path}" if @options[:project_root]
+      path
     end
 
     # Counts the number of instances found using the filter and displays a helpful
