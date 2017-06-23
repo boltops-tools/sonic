@@ -1,4 +1,3 @@
-require "byebug"
 module Sonic
   class Execute
     include AwsServices
