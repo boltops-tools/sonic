@@ -33,6 +33,8 @@ root@fc4035f90bdc:/app#
 
 What you see in the last line above is a bash prompt because you are in a bash shell within the docker container!  Ultimately sonic runs runs a `docker exec -ti ECS_SERVICE_CONTAINER bash` after ssh-ing into the instance.  With one command you have placed yourself into the running container 🎉
 
+### Possibilities
+
 Here are examples to show what is possible:
 
 ```
@@ -59,7 +61,7 @@ sonic ecs-exec 9f1dadc7-4f67-41da-abec-ec08810bfbc9 bash
 sonic ecs-exec i-006a097bb10643e20 bash
 ```
 
-### Settings - service_cluster
+### Settings - service_cluster mapping
 
 As mentioned in the [previous section]({% link _docs/tutorial-ssh.md %}) and also in the [Settings documentation]({% link _docs/settings.md %}) you can configure a `~/.sonic/settings.yml` file which shortens the command further.  Let's add this to your settings:
 

@@ -4,9 +4,15 @@ title: ECS Run
 
 The nice thing about the previous `ecs-exec` command we covered is that it allows you to get into the actual running container and debug with the exact environment that is on production.  The cavaet with doing this is that we are affecting a live process in actual use. If you do something inadvertently wrong on the server it could affect users.  Sometimes it is nice to start up a new container with the exact same environment as the other running containers but be isolated so you cannot affect live requests.
 
+The `sonic ecs-run` command is similar to the `sonic ecs-exec` command except it'll run a brand new container with the same environment variables as the task associated with the service. This allows you to debug in a container with the exact environment variables as the running tasks/containers without affecting the live service. So this is safer since you will not be able to mess up a live container that is in service.
+
 ### sonic ecs-run
 
-The `sonic ecs-run` command is similar to the `sonic ecs-exec` command except it'll run a brand new container with the same environment variables as the task associated with the service. This allows you to debug in a container with the exact environment variables as the running tasks/containers without affecting the live service. So this is safer since you will not be able to mess up a live container that is in service.  Here's an example:
+```sh
+sonic ecs-run [ECS_SERVICE] --cluster [ECS_CLUSTER]
+```
+
+Here's an example:
 
 ```sh
 sonic ecs-run hi-web-stag

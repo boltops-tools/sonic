@@ -4,10 +4,20 @@ title: Sonic Execute
 
 ### Run One Liners
 
-Sonic provides a way to execute commands remotely and securely across a list of AWS servers.  It does this by leveraging [Amazon EC2 Run Command](https://aws.amazon.com/ec2/execute/).  Sonic hides any complexity and provides a simple interface for you. Example:
+Sonic provides a way to execute commands remotely and securely across a list of AWS servers.  It does this by leveraging [Amazon EC2 Run Command](https://aws.amazon.com/ec2/execute/).  Sonic hides any complexity and provides a simple interface for you.   The command is called `sonic execute`:
+
+```sh
+sonic execute [FILTER] [COMMAND]
+```
+
+Examples:
 
 ```sh
 sonic execute hi-web-stag uptime
+sonic execute hi-web-prod uptime
+sonic execute hi-web-prod,hi-worker-prod,hi-clock-prod uptime
+sonic execute i-030033c20c54bf149,i-030033c20c54bf150 uname -a
+sonic execute i-030033c20c54bf149 file://hello.sh
 ```
 
 Let's do something more useful:
@@ -30,7 +40,11 @@ The output of the commands ran are also showed in the EC2 Run Command Console.  
 
 <img src="/img/tutorials/ec2-console-run-command.png" class="doc-photo" />
 
-You can execute a command with a list of filters seprated by commas. For example, this will run the uptime command on any server with a tag value of hi-web-stag,hi-clock-stag, or hi-worker-stag.
+### Polymorphic Filter
+
+The `sonic execute` command can understand a variety of different filters.  The filters can be a list of instances ids or a list of EC2 tag names. Note, ECS service names are *not* supported for the filter.
+
+Here is an example, where the uptime command will run on any server with a tag value of hi-web-stag,hi-clock-stag, or hi-worker-stag.
 
 ```sh
 sonic execute hi-web-stag,hi-clock-stag,hi-worker-stag uptime
@@ -52,6 +66,13 @@ sonic execute hi-web-stag file://hi.sh
 ```
 
 The file gets read by `sonic execute` and sent to EC2 Run Command to be executed.
+
+### Amazon EC2 Run Manager Installation
+
+The `sonic execute` command relies on EC2 Run Manager. So you will need to have EC2 Run Manager installed on the servers where you want to the commands to be executed.
+
+* You can follow the [installation guide]({% link _docs/install.md %}) to install EC2 Run Manager.
+* You can read on [Why EC2 Run Manager]({% link _docs/why-ec2-run-command.md %}) is used also.
 
 <a id="prev" class="btn btn-basic" href="{% link _docs/tutorial-ecs-run.md %}">Back</a>
 <a id="next" class="btn btn-primary" href="{% link _docs/settings.md %}">Next Step</a>

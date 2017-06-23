@@ -24,11 +24,13 @@ Ssh quicky into an EC2 instance using an identifier. The identifier can be many 
 * ECS container instance id. Example: 7fbc8c75-4675-4d39-a5a4-0395ff8cd474
 * ECS task id. Example: 1ed12abd-645c-4a05-9acf-739b9d790170
 
+When using ecs identifiers the `--cluster` option is required or can be set in ~/.sonic/settings.yml.
+
 Examples:
 
 $ sonic ssh i-067c5e3f026c1e801
 $ sonic ssh hi-web-prod
-$ sonic ssh --cluster my-cluster my-ecs-service # cluster is required or ~/.sonic/settings.yml
+$ sonic ssh --cluster my-cluster my-ecs-service
 $ sonic ssh 7fbc8c75-4675-4d39-a5a4-0395ff8cd474
 $ sonic ssh 1ed12abd-645c-4a05-9acf-739b9d790170
 
@@ -55,7 +57,7 @@ $ sonic ssh --bastion user@bastion.domain.com i-027363802c6ff314f
 
 Here's what the output looks like:
 
-$ sonic ssh i-0f7f833131a51ce35 --bastion 34.211.223.3 uptime
+$ sonic ssh --bastion 34.211.223.3 i-0f7f833131a51ce35 uptime
 => ssh -At ec2-user@34.211.223.3 ssh ec2-user@10.10.110.135 uptime
  17:57:59 up 37 min,  0 users,  load average: 0.00, 0.02, 0.00
 Connection to 34.211.223.3 closed.
@@ -71,6 +73,8 @@ with the service and docker exec's into it.
 Examples:
 
 $ sonic ecs-exec my-service --cluster my-cluster
+
+You can use a variety of identifiers.  These include the ECS service name and task id.
 EOL
         end
 

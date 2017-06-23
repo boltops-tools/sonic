@@ -125,7 +125,9 @@ module Sonic
     end
 
     def instance_id?(text)
-      text =~ /i-.{17}/
+      # new format is 17 characters long after i-
+      # old format is 8 characters long after i-
+      text =~ /i-.{17}/ || text =~ /i-.{8}/
     end
   end
 end
