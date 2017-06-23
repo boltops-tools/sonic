@@ -15,7 +15,6 @@ Examples:
 ```sh
 sonic execute hi-web-stag uptime
 sonic execute hi-web-prod uptime
-sonic execute hi-web-prod,hi-worker-prod,hi-clock-prod uptime
 sonic execute i-030033c20c54bf149,i-030033c20c54bf150 uname -a
 sonic execute i-030033c20c54bf149 file://hello.sh
 ```
@@ -42,12 +41,12 @@ The output of the commands ran are also showed in the EC2 Run Command Console.  
 
 ### Polymorphic Filter
 
-The `sonic execute` command can understand a variety of different filters.  The filters can be a list of instances ids or a list of EC2 tag names. Note, ECS service names are *not* supported for the filter.
+The `sonic execute` command can understand a variety of different filters.  The filters can be a list of instances ids or one EC2 tag value.  Note, ECS service names are *not* supported for the filter.
 
-Here is an example, where the uptime command will run on any server with a tag value of hi-web-stag,hi-clock-stag, or hi-worker-stag.
+Here is an example, where the uptime command will run on both i-030033c20c54bf149 and i-030033c20c54bf150 instances.
 
 ```sh
-sonic execute hi-web-stag,hi-clock-stag,hi-worker-stag uptime
+sonic execute i-066b140d9479e9681,i-09482b1a6e330fbf7 uptime
 ```
 
 ### Run Scripts
@@ -75,5 +74,5 @@ The `sonic execute` command relies on EC2 Run Manager. So you will need to have 
 * You can read on [Why EC2 Run Manager]({% link _docs/why-ec2-run-command.md %}) is used also.
 
 <a id="prev" class="btn btn-basic" href="{% link _docs/tutorial-ecs-run.md %}">Back</a>
-<a id="next" class="btn btn-primary" href="{% link _docs/settings.md %}">Next Step</a>
+<a id="next" class="btn btn-primary" href="{% link _docs/tutorial-list.md %}">Next Step</a>
 <p class="keyboard-tip">Pro tip: Use the <- and -> arrow keys to move back and forward.</p>

@@ -30,6 +30,7 @@ module Sonic
 
     desc "execute [FILTER] [COMMAND]", "runs command across fleet of servers via AWS Run Command"
     long_desc Help.execute
+    option :zero_warn, type: :boolean, default: true, desc: "Warns user when no instances found"
     # filter - Filter ec2 instances by tag name or instance_ids separated by commas
     def execute(filter, *command)
       Execute.new(command, options.merge(filter: filter)).execute

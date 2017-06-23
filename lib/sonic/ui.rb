@@ -21,6 +21,9 @@ module Sonic
       def error(msg='')
         say "ERROR: #{msg}".colorize(:red)
       end
+      def warn(msg='')
+        say "WARN: #{msg}".colorize(:yellow)
+      end
     end
   end
 end

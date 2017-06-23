@@ -1,3 +1,4 @@
+require "byebug"
 module Sonic
   class Execute
     include AwsServices
@@ -20,15 +21,21 @@ module Sonic
         UI.noop = true
         command_id = "fake command id"
       else
-        resp = ssm.send_command(ssm_options)
-        command_id = resp.command.command_id
+        instances_count = check_instances
+        return unless instances_count > 0
+
+        success = nil
+        begin
+          resp = ssm.send_command(ssm_options)
+          command_id = resp.command.command_id
+          success = true
+        rescue Aws::SSM::Errors::InvalidInstanceId => e
+          ssm_invalid_instance_error_message(e)
+        end
       end
-      UI.say "Command sent to AWS SSM. To check the details of the command:"
-      list_command = "aws ssm list-commands --command-id #{command_id}"
-      UI.say list_command
-      if RUBY_PLATFORM =~ /darwin/
-        system("echo '#{list_command}' | pbcopy")
-        UI.say "Pro tip: the aws ssm command is already in your copy/paste clipboard."
+      if success
+        UI.say "Command sent to AWS SSM. To check the details of the command:"
+        display_list_command(command_id)
       end
     end
 
@@ -55,10 +62,24 @@ module Sonic
         end
       else
         # The script is being feed inline so just join the command together into one script.
-        # Still keep in an array form because that's how ssn.send_command with AWS-RunShellScript
+        # Still keep in an array form because that's how ssn.send_command works with AWS-RunShellScript
         # usually reads the command.
         [command.join(" ")]
       end
+    end
+
+    # e = Aws::SSM::Errors::InvalidInstanceId
+    def ssm_invalid_instance_error_message(e)
+      # e.message is an empty string so not very helpful
+      ssm_describe_command = 'aws ssm describe-instance-information --output text --query "InstanceInformationList[*]"'
+      message = <<-EOS
+One of the instance ids: #{@filter.join(",")} is invalid according to SSM.
+This might be because the SSM agent on the instance has not yet checked in.
+You can use the following command to check registered instances to SSM.
+#{ssm_describe_command}
+      EOS
+      UI.warn(message)
+      copy_paste_clipboard(ssm_describe_command)
     end
 
     def file_path?(command)
@@ -119,6 +140,25 @@ module Sonic
       end
     end
 
+    # Counts the number of instances found using the filter and displays a helpful
+    # message to the user if 0 found.
+    def check_instances
+      return if @options[:zero_warn] == false
+
+      # The list options is a superset of the execute options so we can pass
+      # it right through
+      instances = List.new(@options).instances
+      if instances.count == 0
+        message = <<~EOL
+          Unable to find any instances with filter #{@filter.join(',')}.
+          Are you sure you specify the filter with either a EC2 tag or list instance ids?
+          If you are using ECS identifiers, they are not supported with this command.
+        EOL
+        UI.warn(message)
+      end
+      instances.count
+    end
+
     # TODO: make configurable
     def tag_name
       "Name"
@@ -128,6 +168,18 @@ module Sonic
       # new format is 17 characters long after i-
       # old format is 8 characters long after i-
       text =~ /i-.{17}/ || text =~ /i-.{8}/
+    end
+
+    def display_list_command(command_id)
+      list_command = "aws ssm list-commands --command-id #{command_id}"
+      UI.say list_command
+      copy_paste_clipboard(list_command)
+    end
+
+    def copy_paste_clipboard(command)
+      return unless RUBY_PLATFORM =~ /darwin/
+      system("echo '#{command}' | pbcopy")
+      UI.say "Pro tip: the aws ssm command is already in your copy/paste clipboard."
     end
   end
 end
