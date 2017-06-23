@@ -2,6 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/boltopslabs/sonic.svg?style=svg)](https://circleci.com/gh/boltopslabs/sonic)
 [![Gitter](https://badges.gitter.im/boltopslabs/sonic.svg)](https://gitter.im/boltopslabs/sonic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Support](https://img.shields.io/badge/get-support-blue.svg)](https://boltops.com?utm_source=badge&utm_medium=badge&utm_campaign=sonic)
 
 Sonic is a multi-functional tool that helps you manage AWS resources. Sonic contains is a group of commands that help debug EC2 instances and ECS containers quickly.
 
