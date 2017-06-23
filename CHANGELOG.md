@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 This project *tries* to adhere to [Semantic Versioning](http://semver.org/), even before v1.0.
 
+## [1.3.0]
+- support for different bastion cluster host mapping in settings
+
 ## [1.2.0]
 - add old instance id support
 - update docs and help
