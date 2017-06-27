@@ -15,7 +15,13 @@ bastion: # cluster_host mapping
 
 The configuration specifies a bastion for the specific clusters. If the cluster is not in the configuration it defaults to the default bastion host setting.
 
-The settting directs the `sonic ssh` to jump through the bastion host. This works completely transparently. The sonic commands are exactly the same as if there is no bastion host.
+```sh
+sonic ssh --cluster prod [IDENTIFER] # ec2-user@bastion.mydomain.com used as the bastion host
+sonic ssh --cluster stag [IDENTIFER] # ubuntu@bastion-stag.mydomain.com used as the bastion host
+sonic ssh --cluster whatever [IDENTIFER] # ec2-user@bastion.mydomain.com used as the bastion host
+```
+
+The settting directs the `sonic ssh` to jump through the bastion host. This works completely transparently. The sonic commands are exactly the same as if there is no bastion host. Examples:
 
 ```
 sonic ssh i-0f7f833131a51ce35
