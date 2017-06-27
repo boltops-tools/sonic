@@ -7,10 +7,15 @@ It is common to secure your network setup by restricting access to your servers 
 You can configure the [settings.yml]({% link _docs/settings.md %}) file to use a bastion host. Here's an example:
 
 ```yaml
-bastion: bastion.mydomain.com
+bastion: # cluster_host mapping
+  default: ec2-user@bastion.mydomain.com
+  prod: ec2-user@bastion.mydomain.com
+  stag: ubuntu@bastion-stag.mydomain.com
 ```
 
-This directs the `sonic ssh` to jump through the bastion host. This works completely transparently. The sonic commands are exactly the same as if there is no bastion host.
+The configuration specifies a bastion for the specific clusters. If the cluster is not in the configuration it defaults to the default bastion host setting.
+
+The settting directs the `sonic ssh` to jump through the bastion host. This works completely transparently. The sonic commands are exactly the same as if there is no bastion host.
 
 ```
 sonic ssh i-0f7f833131a51ce35
