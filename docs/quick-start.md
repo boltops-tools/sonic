@@ -37,7 +37,7 @@ sonic execute hi-web-stag,hi-worker-stag uptime
 sonic list hi-web-stag
 ```
 
-Congratulations! You now know the basics sonic screwdriver commands.
+Congratulations! You now know the basic sonic screwdriver commands now.
 
 Learn more in the next sections.
 
