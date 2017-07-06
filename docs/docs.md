@@ -4,7 +4,7 @@ title: Docs
 
 ### Overview
 
-Sonic Screwdriver is a multi-functional tool to manage AWS infrastructure.  It contains a variety of commands to make your job easier. It's main focus is to automate mundane repetitive tasks into simple one line commmands. With it you are to able debug environments and issues much more quickly.
+Sonic Screwdriver is a multi-functional tool to manage AWS infrastructure.  It contains a variety of commands to make your job easier. It's main focus is to automate mundane repetitive tasks into simple one line commmands. With it you are to able debug environments and issues quickly.
 
 The actually command that Sonic Screwdriver provides is called `sonic`.  Here's a list of things that `sonic` can do:
 
