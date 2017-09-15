@@ -2,9 +2,23 @@
 title: Installation
 ---
 
+### Install with RubyGems
+
+If can install sonic via RubyGems:
+
+```sh
+gem install sonic-screwdriver
+```
+
+You can also add sonic to your Gemfile in your project if you are working with a ruby project.  It is not required for your project to be a ruby project to use sonic.
+
+```ruby
+gem "sonic-screwdriver"
+```
+
 ### Install with Bolts Toolbelt
 
-If you want to quickly install sonic without having to worry about sonic's dependency you can simply install the Bolts Toolbelt which has sonic included.
+If you want to install sonic without having to worry about sonic's ruby dependency you can simply install the Bolts Toolbelt which has sonic included.
 
 ```sh
 brew cask install boltopslabs/software/bolts
@@ -12,25 +26,11 @@ brew cask install boltopslabs/software/bolts
 
 For more information about the Bolts Toolbelt or to get an installer for another operating system visit: [https://boltops.com/toolbelt](https://boltops.com/toolbelt)
 
-### Install with RubyGems
-
-If you prefer to install sonic via RubyGems follow the instructions:
-
-```sh
-gem install sonic-screwdriver
-```
-
-Or you can add sonic to your Gemfile in your project if you are working with a ruby project.  It is not required for your project to be a ruby project to use sonic.
-
-```ruby
-gem "sonic-screwdriver"
-```
-
 ### Server Side Dependencies
 
 #### sonic ecs-* dependencies
 
-In order for the `sonic ecs-*` commands to work `jq` is required on the server side. This is covered in the [How It Works]({% link _docs/how-it-works.md %}) section.
+For the `sonic ecs-*` commands to work `jq` is required on the server side. This is covered in the [How It Works]({% link _docs/how-it-works.md %}) section.
 
 One way to install `jq` quickly is by using the `sonic execute` command.  For example:
 
@@ -46,15 +46,15 @@ The `sonic execute` works alongside [Amazon EC2 Run Command](https://aws.amazon.
 
 #### Amazon EC2 Run Manager Installation
 
-Installing the EC2 Run Manager agent on your linux servers is super simple and is only one command.
+Installing the EC2 Run Manager agent on your Linux servers is super simple and is only one command.
 
 ```sh
 sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
 ```
 
-The full recommended instructions are on the offical Amazon EC2 Systems Manager [Install SSM Agent](http://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) documentation.
+The full recommended instructions are on the official Amazon EC2 Systems Manager [Install SSM Agent](http://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) documentation.
 
-The trickest part of installing is likely making sure that the agent on the server has successfully checked into the SSM service.  Verify it by tailing `/var/log/amazon/ssm/errors/errors.log`.
+The trickiest part of installing is likely making sure that the agent on the server has successfully checked into the SSM service.  Verify it by tailing `/var/log/amazon/ssm/errors/errors.log`.
 
 If you are having issues, it is most likely IAM issues.  Amazon also provides [Configuring Security Roles](http://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-access.html) docs to fix any IAM issues.
 
