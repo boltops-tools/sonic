@@ -28,6 +28,8 @@ For more information about the Bolts Toolbelt or to get an installer for another
 
 ### Server Side Dependencies
 
+For a small set of the commands there are server side dependencies.
+
 #### sonic ecs-* dependencies
 
 For the `sonic ecs-*` commands to work `jq` is required on the server side. This is covered in the [How It Works]({% link _docs/how-it-works.md %}) section.

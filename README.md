@@ -30,19 +30,19 @@ By the time I get into the container, I need to remind my brain on what the orig
 
 ## Install
 
+You can install sonic with RubyGems
+
+```sh
+gem install sonic
+```
+
 If you want to quickly install sonic without having to worry about sonic's dependencies you can simply install the Bolts Toolbelt which has sonic included.
 
 ```sh
 brew cask install boltopslabs/software/bolts
 ```
 
-Or if you prefer you can install ufo with RubyGems
-
-```sh
-gem install ufo
-```
-
-Full installation instructions are at [Install Sonic Screwdriver](http://localhost:4000/docs/install/).  There are some server side dependencies for some of the sonic commands so it is important to read through the full installation guide.
+Full installation instructions are at [Install Sonic Screwdriver](http://sonic-screwdriver.cloud/docs/install/).  There are some server side dependencies for some of the sonic commands so it is important to read through the full installation guide.
 
 ## Quick Start
 
