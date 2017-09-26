@@ -3,8 +3,10 @@ require 'colorize'
 module Sonic
   class Ssh
     autoload :IdentifierDetector, 'sonic/ssh/identifier_detector'
+    autoload :CliOptions, 'sonic/ssh/cli_options'
 
     include AwsServices
+    include CliOptions
 
     def initialize(identifier, options)
       @options = options
@@ -21,6 +23,7 @@ module Sonic
 
     def run
       ssh = build_ssh_command
+      retry_until_success(*ssh) if @options[:retry]
       kernel_exec(*ssh) # must splat the Array here
     end
 
@@ -84,8 +87,11 @@ private
     end
 
     # Returns Array of flags.
+    # Example:
+    #   ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null"]
     def ssh_options
-      settings.host_key_check_options
+      host_key_check_options = settings.host_key_check_options
+      keys_option + host_key_check_options
     end
 
     # Will prepend the bastion host if required
@@ -133,6 +139,21 @@ private
       else
         [nil, identifier]
       end
+    end
+
+    def retry_until_success(*command)
+      retries = 0
+      uptime = command + ['uptime', '2>&1']
+      uptime = uptime.join(' ')
+      out = `#{uptime}`
+      while out !~ /load average/ do
+        puts "Can't ssh into the server yet.  Retrying until success." if retries == 0
+        print '.'
+        retries += 1
+        sleep 1
+        out = `#{uptime}`
+      end
+      puts "" if @options[:retry] && retries > 0
     end
   end
 end

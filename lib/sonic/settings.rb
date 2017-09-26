@@ -96,9 +96,10 @@ module Sonic
       data
     end
 
+    # By default bypass strict host key checking for convenience.
+    # But user can overrride this.
     def host_key_check_options
-      if data["host_key_check"]
-        # no options by default enables strict host key checking
+      if data["host_key_check"] == true
         []
       else
         # disables host key checking
