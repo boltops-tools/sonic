@@ -48,6 +48,20 @@ $ sonic ssh i-027363802c6ff314f uptime
 => ssh ec2-user@ec2-52-24-216-170.us-west-2.compute.amazonaws.com uptime
  15:57:02 up 18:21,  0 users,  load average: 0.00, 0.01, 0.00
 
+Specifying pem keys:
+
+The recommended way to specify custom private keys is to use ssh-agent as covered here: https://blog.boltops.com/2017/09/21/3-ssh-tips-ssh-agent-tunnel-and-escaping-from-the-dead
+
+But you can also specify the pem key to use with the -i option.  Example:
+
+$ sonic ssh -i ~/.ssh/id_rsa-custom ec2-user@ec2-52-24-216-170.us-west-2.compute.amazonaws.com
+
+Retry option:
+
+For newly launched instances, the instance's ssh access might not be quite ready. Typically, you must press up enter repeatedly until the instance is ready.  Sonic ssh has a retry option that automates this. Example:
+
+$ sonic ssh -r i-027363802c6ff314f
+
 Bastion Host Support
 
 Sonic ssh also supports a bastion host.
