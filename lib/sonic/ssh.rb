@@ -3,8 +3,10 @@ require 'colorize'
 module Sonic
   class Ssh
     autoload :IdentifierDetector, 'sonic/ssh/identifier_detector'
+    autoload :CliOptions, 'sonic/ssh/cli_options'
 
     include AwsServices
+    include CliOptions
 
     def initialize(identifier, options)
       @options = options
@@ -84,8 +86,13 @@ private
     end
 
     # Returns Array of flags.
+    # Example:
+    #   ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null"]
     def ssh_options
-      settings.host_key_check_options
+      host_key_check_options = settings.host_key_check_options
+      puts "keys_option #{keys_option.inspect}"
+      puts "host_key_check_options #{host_key_check_options.inspect}"
+      keys_option + host_key_check_options
     end
 
     # Will prepend the bastion host if required

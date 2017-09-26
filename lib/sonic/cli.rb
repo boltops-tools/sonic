@@ -11,6 +11,7 @@ module Sonic
 
     desc "ssh [IDENTIFER]", "ssh into a instance using identifier. identifer can be several things: instance id, ec2 tag, ECS service name, etc"
     long_desc Help.ssh
+    method_option :keys, :aliases => '-i', :desc => "comma separated list of ssh private key paths"
     def ssh(identifier, *command)
       Ssh.new(identifier, options.merge(command: command)).run
     end
