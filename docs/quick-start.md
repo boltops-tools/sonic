@@ -7,7 +7,7 @@ In a hurry? No sweat! Here's a quick overview of how to use sonic.
 ### Install
 
 ```sh
-brew cask install boltopslabs/software/bolts
+gem install sonic-screwdriver
 ```
 
 ### Usage
