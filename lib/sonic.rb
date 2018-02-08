@@ -1,6 +1,5 @@
 $:.unshift(File.expand_path("../", __FILE__))
 require "sonic/version"
-require "aws-sdk"
 require "colorize"
 
 module Sonic
