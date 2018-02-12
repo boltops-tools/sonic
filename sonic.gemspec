@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["tung@boltops.com"]
   spec.description   = %q{Multi-functional tool to manage AWS infrastructure}
   spec.summary       = %q{Multi-functional tool to manage AWS infrastructure}
-  spec.homepage      = ""
+  spec.homepage      = "http://sonic-screwdriver.cloud/"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
@@ -21,10 +21,12 @@ Gem::Specification.new do |spec|
   spec.add_dependency "thor"
   spec.add_dependency "hashie"
   spec.add_dependency "colorize"
-  spec.add_dependency "aws-sdk"
+  spec.add_dependency "aws-sdk-ec2"
+  spec.add_dependency "aws-sdk-ecs"
+  spec.add_dependency "aws-sdk-ssm"
   spec.add_dependency "tty-prompt"
 
-  spec.add_development_dependency "bundler", "~> 1.3"
+  spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "guard"
   spec.add_development_dependency "guard-bundler"

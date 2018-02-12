@@ -1,3 +1,7 @@
+require "aws-sdk-ec2"
+require "aws-sdk-ecs"
+require "aws-sdk-ssm"
+
 module Sonic
   module AwsServices
     def ecs
