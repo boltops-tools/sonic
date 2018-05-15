@@ -10,18 +10,24 @@ module Sonic
       return @data if @data
 
       project_file = "#{@project_root}/.sonic/settings.yml"
-      project = File.exist?(project_file) ? YAML.load_file(project_file) : {}
+      project = File.exist?(project_file) ? load_yaml_file(project_file) : {}
 
       user_file = "#{home}/.sonic/settings.yml"
-      user = File.exist?(user_file) ? YAML.load_file(user_file) : {}
+      user = File.exist?(user_file) ? load_yaml_file(user_file) : {}
 
       default_file = File.expand_path("../default/settings.yml", __FILE__)
-      default = YAML.load_file(default_file)
+      default = load_yaml_file(default_file)
 
       @data = default.merge(user.merge(project))
       ensure_default_cluster!(@data)
       ensure_default_bastion!(data)
       @data
+    end
+
+    # Any empty file will result in "false".  Lets ensure that an empty file
+    # loads an empty hash instead.
+    def load_yaml_file(path)
+      YAML.load_file(path) || {}
     end
 
     # Public: Returns default cluster based on the ECS service name.
