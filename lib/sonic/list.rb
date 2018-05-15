@@ -1,6 +1,6 @@
 module Sonic
   class List
-    include AwsServices
+    include AwsService
 
     def initialize(options)
       @options = options

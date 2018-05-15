@@ -4,7 +4,7 @@ class Ssh
   class IdentifierDetector
 
     include Ec2Tag
-    include AwsServices
+    include AwsService
     include Checks
 
     def initialize(cluster, service, identifier, options)

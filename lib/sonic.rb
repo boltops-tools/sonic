@@ -3,7 +3,7 @@ require "sonic/version"
 require "colorize"
 
 module Sonic
-  autoload :AwsServices, 'sonic/aws_services'
+  autoload :AwsService, 'sonic/aws_service'
   autoload :CLI, 'sonic/cli'
   autoload :Command, 'sonic/command'
   autoload :Docker, 'sonic/docker'

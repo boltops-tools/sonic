@@ -2,7 +2,7 @@ require 'colorize'
 
 module Sonic
   class Execute
-    include AwsServices
+    include AwsService
 
     def initialize(command, options)
       @command = command

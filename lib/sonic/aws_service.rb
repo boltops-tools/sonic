@@ -3,7 +3,7 @@ require "aws-sdk-ecs"
 require "aws-sdk-ssm"
 
 module Sonic
-  module AwsServices
+  module AwsService
     def ecs
       @ecs ||= Aws::ECS::Client.new
     end

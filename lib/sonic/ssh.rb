@@ -5,7 +5,7 @@ module Sonic
     autoload :IdentifierDetector, 'sonic/ssh/identifier_detector'
     autoload :CliOptions, 'sonic/ssh/cli_options'
 
-    include AwsServices
+    include AwsService
     include CliOptions
 
     def initialize(identifier, options)
