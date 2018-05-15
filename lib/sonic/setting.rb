@@ -1,7 +1,7 @@
 require 'yaml'
 
 module Sonic
-  class Settings
+  class Setting
     def initialize(project_root=nil)
       @project_root = project_root || '.'
     end

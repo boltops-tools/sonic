@@ -14,11 +14,11 @@ module Sonic
       @user, @identifier = extract_user!(identifier) # extracts/strips user from identifier
       # While --user option is supported at the class level, don't expose at the CLI level
       # to encourage users to use user@host notation.
-      @user ||= options[:user] || settings.data["user"]
+      @user ||= options[:user] || setting.data["user"]
 
       @service = @identifier # always set service even though it's not always used as the identifier
-      @cluster = options[:cluster] || settings.default_cluster(@service)
-      @bastion = options[:bastion] || settings.default_bastion(@bastion)
+      @cluster = options[:cluster] || setting.default_cluster(@service)
+      @bastion = options[:bastion] || setting.default_bastion(@bastion)
     end
 
     def run
@@ -82,15 +82,15 @@ module Sonic
     end
 
 private
-    def settings
-      @settings ||= Settings.new(@options[:project_root])
+    def setting
+      @setting ||= Setting.new(@options[:project_root])
     end
 
     # Returns Array of flags.
     # Example:
     #   ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null"]
     def ssh_options
-      host_key_check_options = settings.host_key_check_options
+      host_key_check_options = setting.host_key_check_options
       keys_option + host_key_check_options
     end
 

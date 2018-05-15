@@ -9,7 +9,7 @@ module Sonic
   autoload :Docker, 'sonic/docker'
   autoload :Execute, 'sonic/execute'
   autoload :List, 'sonic/list'
-  autoload :Settings, 'sonic/settings'
+  autoload :Setting, 'sonic/setting'
   autoload :Ssh, 'sonic/ssh'
   autoload :UI, 'sonic/ui'
   autoload :Checks, 'sonic/checks'
