@@ -18,9 +18,10 @@ module Sonic
       default_file = File.expand_path("../default/settings.yml", __FILE__)
       default = load_yaml_file(default_file)
 
-      @data = default.merge(user.merge(project))
+      @data = default.merge(user.merge(project))[Sonic.env]
+
       ensure_default_cluster!(@data)
-      ensure_default_bastion!(data)
+
       @data
     end
 
@@ -75,10 +76,7 @@ module Sonic
     #
     # The settings.yml format:
     #
-    # bastion:
-    #   default: bastion.mydomain.com
-    #   prod: bastion.mydomain.com
-    #   stag: bastion-stag.mydomain.com
+    # bastion: bastion.mydomain.com
     #
     # Examples
     #
@@ -89,17 +87,7 @@ module Sonic
     #
     # Returns the bastion host that is mapped to the cluster
     def default_bastion(cluster)
-      bastion = data["bastion"]
-      bastion[cluster] || bastion["default"]
-    end
-
-    # When user's .sonic/settings.yml lack the default cluster, we add it on.
-    def ensure_default_bastion!(data)
-      unless data["bastion"] && data["bastion"].has_key?("default")
-        data["bastion"] ||= {}
-        data["bastion"]["default"] = nil
-      end
-      data
+      data["bastion"]
     end
 
     # By default bypass strict host key checking for convenience.

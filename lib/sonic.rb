@@ -3,6 +3,7 @@ require "sonic/version"
 require "colorize"
 
 module Sonic
+  autoload :Core, 'sonic/core'
   autoload :AwsService, 'sonic/aws_service'
   autoload :CLI, 'sonic/cli'
   autoload :Command, 'sonic/command'
@@ -13,4 +14,6 @@ module Sonic
   autoload :Ssh, 'sonic/ssh'
   autoload :UI, 'sonic/ui'
   autoload :Checks, 'sonic/checks'
+
+  extend Core
 end
