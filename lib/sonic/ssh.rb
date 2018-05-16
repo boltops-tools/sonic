@@ -57,18 +57,20 @@ module Sonic
         resp = ec2.describe_instances(instance_ids: [ec2_instance_id])
       rescue Aws::EC2::Errors::InvalidInstanceIDNotFound => e
         # e.message: The instance ID 'i-027363802c6ff3141' does not exist
-        UI.error(e.message)
+        UI.error e.message
+        exit 1
+      rescue Aws::Errors::NoSuchEndpointError, SocketError
+        UI.error "It doesnt look like you have an internet connection. Please double check that you have an internet connection."
         exit 1
       end
       instance = resp.reservations[0].instances[0]
       # struct Aws::EC2::Types::Instance
       # http://docs.aws.amazon.com/sdkforruby/api/Aws/EC2/Types/Instance.html
-      host = if @bastion
-              instance.private_ip_address
-            else
-              instance.public_ip_address
-            end
-      "#{@user}@#{host}"
+      if @bastion
+        instance.private_ip_address
+      else
+        instance.public_ip_address
+      end
     end
 
     # Will use Kernel.exec so that the ssh process takes over this ruby process.
@@ -111,12 +113,14 @@ private
     # -A = Enables forwarding of the authentication agent connection
     # -t = Force pseudo-terminal allocati
     def build_ssh_command
-      ssh = ["ssh"] + ssh_options
-      ssh += ["-At", bastion_host, "ssh"] + ssh_options if @bastion
-      # ssh_host is internal ip when bastion is set
-      # ssh_host is public ip when bastion is not set
-      ssh += ["-At", ssh_host]
-      ssh
+      command = ["ssh", "-t"] + ssh_options
+      if @bastion
+        # https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts
+        # -J xxx is -o ProxyJump=xxx
+        proxy_jump = ["-J", bastion_host]
+        command += proxy_jump
+      end
+      command += ["-t", "#{@user}@#{ssh_host}"]
     end
 
     # Private: Extracts and strips the user from the identifier.
