@@ -28,7 +28,7 @@ module Sonic
 
         success = nil
         begin
-          puts "ssm_options #{ssm_options}".colorize(:cyan)
+          # puts "ssm_options #{ssm_options}".colorize(:cyan)
           resp = ssm.send_command(ssm_options)
           command_id = resp.command.command_id
           success = true
@@ -46,8 +46,8 @@ module Sonic
       criteria = transform_filter(@filter)
       command = build_command(@command)
       criteria.merge(
-        # document_name: "AWS-RunShellScript",
-        document_name: "AWS-RunPowerShellScript",
+        document_name: "AWS-RunShellScript",
+        # document_name: "AWS-RunPowerShellScript",
         comment: "sonic #{ARGV.join(' ')}",
         parameters: {
           "commands" => command
