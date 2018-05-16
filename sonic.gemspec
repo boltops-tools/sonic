@@ -1,20 +1,20 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'sonic/version'
+require "sonic/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "sonic-screwdriver"
   spec.version       = Sonic::VERSION
   spec.authors       = ["Tung Nguyen"]
   spec.email         = ["tung@boltops.com"]
-  spec.description   = %q{Multi-functional tool to manage AWS infrastructure}
-  spec.summary       = %q{Multi-functional tool to manage AWS infrastructure}
+  spec.description   = "Multi-functional tool to manage AWS infrastructure"
   spec.homepage      = "http://sonic-screwdriver.cloud/"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.bindir        = "exe"
+  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 

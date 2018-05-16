@@ -7,8 +7,8 @@ Signal.trap("INT") {
   exit
 }
 
-$:.unshift(File.expand_path('../../lib', __FILE__))
-require 'sonic'
-require 'sonic/cli'
+$:.unshift(File.expand_path("../../lib", __FILE__))
+require "sonic"
+require "sonic/cli"
 
 Sonic::CLI.start(ARGV)
