@@ -3,6 +3,11 @@ require 'yaml'
 
 module Sonic
   module Core
+    def root
+      path = ENV['SONIC_ROOT'] || '.'
+      Pathname.new(path)
+    end
+
     @@env = nil
     def env
       return @@env if @@env

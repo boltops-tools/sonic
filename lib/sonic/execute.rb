@@ -140,7 +140,7 @@ You can use the following command to check registered instances to SSM.
     def file_path(command)
       path = command.first
       path = path.sub('file://', '')
-      path = "#{@options[:project_root]}/#{path}" if @options[:project_root]
+      path = "#{Sonic.root}/#{path}"
       path
     end
 

@@ -85,7 +85,7 @@ module Sonic
 
 private
     def setting
-      @setting ||= Setting.new(@options[:project_root])
+      @setting ||= Setting.new
     end
 
     # Returns Array of flags.

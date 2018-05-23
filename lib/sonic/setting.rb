@@ -2,14 +2,10 @@ require 'yaml'
 
 module Sonic
   class Setting
-    def initialize(project_root=nil)
-      @project_root = project_root || '.'
-    end
-
     def data
       return @data if @data
 
-      project_file = "#{@project_root}/.sonic/settings.yml"
+      project_file = "#{Sonic.root}/.sonic/settings.yml"
       project = File.exist?(project_file) ? load_yaml_file(project_file) : {}
 
       user_file = "#{home}/.sonic/settings.yml"
