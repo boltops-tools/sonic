@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "aws-sdk-ec2"
   spec.add_dependency "aws-sdk-ecs"
   spec.add_dependency "aws-sdk-ssm"
+  spec.add_dependency "aws-sdk-s3"
   spec.add_dependency "tty-prompt"
   spec.add_dependency "activesupport"
 

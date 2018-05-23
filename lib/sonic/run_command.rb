@@ -82,13 +82,27 @@ module Sonic
       s3_key = "standard_#{type}_url"
 
       content = resp[content_key]
-      unless content.empty?
-        puts "#{content_key}:"
+      return if content.empty?
+
+      # "https://s3.amazonaws.com/lr-infrastructure-prod/ssm/commands/sonic/0a4f4bef-8f63-4235-8b30-ae296477261a/i-0b2e6e187a3f9ada9/awsrunPowerShellScript/0.awsrunPowerShellScript/stderr">
+      if content.include?("--output truncated--") && !resp[s3_key].empty?
+        s3_url = resp[s3_key]
+        info = s3_url.sub('https://s3.amazonaws.com/', '').split('/')
+        bucket = info[0]
+        key = info[1..-1].join('/')
+        resp = s3.get_object(bucket: bucket, key: key)
+        data = resp.body.read
+        puts data
+
+        path = "/tmp/sonic-output.txt"
+        puts "------"
+        puts "Output also written to #{path}"
+        IO.write(path, data)
+      else
         puts content
-        if content.include?("--output truncated--") &&  !resp[s3_key].empty?
-          puts "#{s3_key}: #{resp[s3_key]}"
-        end
       end
+
+      # puts "#{s3_key}: #{resp[s3_key]}"
     end
 
     def send_command(options)
@@ -105,7 +119,8 @@ module Sonic
           "AWS-RunPowerShellScript" : "AWS-RunShellScript"
 
         puts "#{$!}"
-        puts "Retrying retries: #{retries}"
+        puts "Retrying with document_name #{options[:document_name]}"
+        puts "Retries: #{retries}"
 
         retries <= 1 ? retry : raise
       end
@@ -118,7 +133,7 @@ module Sonic
       command = build_command(@command)
       options = criteria.merge(
         document_name: "AWS-RunShellScript", # default
-        comment: "sonic #{ARGV.join(' ')}",
+        comment: "sonic #{ARGV.join(' ')}"[0..99], # comment has a max of 100 chars
         parameters: { "commands" => command }
       )
       param_options = params["send_command"].deep_symbolize_keys

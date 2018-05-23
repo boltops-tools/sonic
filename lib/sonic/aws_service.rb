@@ -1,6 +1,7 @@
 require "aws-sdk-ec2"
 require "aws-sdk-ecs"
 require "aws-sdk-ssm"
+require "aws-sdk-s3"
 
 module Sonic
   module AwsService
@@ -18,6 +19,10 @@ module Sonic
 
     def ssm
       @ssm ||= Aws::SSM::Client.new
+    end
+
+    def s3
+      @s3 ||= Aws::S3::Client.new
     end
   end
 end
