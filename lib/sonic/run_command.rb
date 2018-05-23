@@ -39,9 +39,55 @@ module Sonic
           ssm_invalid_instance_error_message(e)
         end
       end
-      if success
-        UI.say "Command sent to AWS SSM. To check the details of the command:"
-        display_ssm_commands(command_id, ssm_options)
+
+      return unless success
+
+      # IF COMMAND IS ONLY ON A SINGLE INSTANCE THEN WILL DISPLAY A BUNCH OF
+      # INFO ON THE INSTANCE. IF ITS A LOT OF INSTANCES, THEN SHOW A SUMMARY
+      # OF COMMANDS THAT WILL LEAD TO THE OUTPUT OF EACH INSTANCE.
+      UI.say "Command sent to AWS SSM. To check the details of the command:"
+      display_ssm_commands(command_id, ssm_options)
+      wait(command_id)
+      display_ssm_output(command_id, ssm_options)
+    end
+
+    def wait(command_id)
+      ongoing_states = ["Pending", "InProgress", "Delayed"]
+
+      print "waiting for ssm command to finish..."
+      resp = ssm.list_commands(command_id: command_id)
+      status = resp["commands"].first["status"]
+      while ongoing_states.include?(status)
+        resp = ssm.list_commands(command_id: command_id)
+        status = resp["commands"].first["status"]
+        sleep 1
+        print '.'
+      end
+      puts
+    end
+
+    def display_ssm_output(command_id, ssm_options)
+      instance_id = ssm_options[:instance_ids].first
+      resp = ssm.get_command_invocation(
+        command_id: command_id, instance_id: instance_id
+      )
+      puts "status: #{resp["status"]}"
+      ssm_output(resp, "output")
+      ssm_output(resp, "error")
+    end
+
+    # type: output or error
+    def ssm_output(resp, type)
+      content_key = "standard_#{type}_content"
+      s3_key = "standard_#{type}_url"
+
+      content = resp[content_key]
+      unless content.empty?
+        puts "#{content_key}:"
+        puts content
+        if content.include?("--output truncated--") &&  !resp[s3_key].empty?
+          puts "#{s3_key}: #{resp[s3_key]}"
+        end
       end
     end
 
@@ -206,13 +252,9 @@ EOL
       list_command = "aws ssm list-commands --command-id #{command_id}"
       UI.say list_command
 
-      if ssm_options[:instance_ids]
-        ssm_options[:instance_ids].each do |instance_id|
-          get_command = "aws ssm get-command-invocation --command-id #{command_id} --instance-id #{instance_id}"
-          UI.say get_command
-        end
-      else
-        get_command = "aws ssm get-command-invocation --command-id #{command_id} --instance-id XXX"
+      return unless ssm_options[:instance_ids]
+      ssm_options[:instance_ids].each do |instance_id|
+        get_command = "aws ssm get-command-invocation --command-id #{command_id} --instance-id #{instance_id}"
         UI.say get_command
       end
       # copy_paste_clipboard(list_command)
