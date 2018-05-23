@@ -37,12 +37,12 @@ module Sonic
       Docker.new(service, options.merge(command: command)).run
     end
 
-    desc "execute [FILTER] [COMMAND]", "runs command across fleet of servers via AWS Run Command"
-    long_desc Help.text(:execute)
+    desc "run_command [FILTER] [COMMAND]", "runs command across fleet of servers via AWS Run Command"
+    long_desc Help.text(:run_command)
     option :zero_warn, type: :boolean, default: true, desc: "Warns user when no instances found"
     # filter - Filter ec2 instances by tag name or instance_ids separated by commas
-    def execute(filter, *command)
-      Execute.new(command, options.merge(filter: filter)).execute
+    def run_command(filter, *command)
+      RunCommand.new(command, options.merge(filter: filter)).run_command
     end
 
     desc "list [FILTER]", "lists ec2 instances"

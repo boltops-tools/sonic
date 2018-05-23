@@ -1,7 +1,7 @@
 require 'colorize'
 
 module Sonic
-  class Execute
+  class RunCommand
     include AwsService
 
     def initialize(command, options)

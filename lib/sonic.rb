@@ -9,7 +9,7 @@ module Sonic
   autoload :CLI, 'sonic/cli'
   autoload :Command, 'sonic/command'
   autoload :Docker, 'sonic/docker'
-  autoload :Execute, 'sonic/execute'
+  autoload :RunCommand, 'sonic/run_command'
   autoload :List, 'sonic/list'
   autoload :Setting, 'sonic/setting'
   autoload :Ssh, 'sonic/ssh'
