@@ -3,6 +3,6 @@ with the service and docker exec's into it.
 
 Examples:
 
-    $ sonic ecs-exec my-service --cluster my-cluster
+    $ sonic ecs_exec my-service --cluster my-cluster
 
 You can use a variety of identifiers.  These include the ECS service name and task id.

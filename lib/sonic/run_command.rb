@@ -1,4 +1,6 @@
 require 'colorize'
+require 'yaml'
+require 'active_support/core_ext/hash'
 
 module Sonic
   class RunCommand
@@ -27,9 +29,10 @@ module Sonic
         return unless instances_count > 0
 
         success = nil
+        puts "ssm_options:"
+        puts YAML.dump(ssm_options.deep_stringify_keys)
         begin
-          # puts "ssm_options #{ssm_options}".colorize(:cyan)
-          resp = ssm.send_command(ssm_options)
+          resp = send_command(ssm_options)
           command_id = resp.command.command_id
           success = true
         rescue Aws::SSM::Errors::InvalidInstanceId => e
@@ -38,21 +41,46 @@ module Sonic
       end
       if success
         UI.say "Command sent to AWS SSM. To check the details of the command:"
-        display_list_command(command_id)
+        display_ssm_commands(command_id, ssm_options)
       end
+    end
+
+    def send_command(options)
+      retries = 0
+
+      begin
+        resp = ssm.send_command(options)
+        # puts "NOOP FOR NOW"
+      rescue Aws::SSM::Errors::UnsupportedPlatformType
+        retries += 1
+        # toggle AWS-RunShellScript / AWS-RunPowerShellScript
+        options[:document_name] =
+          options[:document_name] == "AWS-RunShellScript" ?
+          "AWS-RunPowerShellScript" : "AWS-RunShellScript"
+
+        puts "#{$!}"
+        puts "Retrying retries: #{retries}"
+
+        retries <= 1 ? retry : raise
+      end
+
+      resp
     end
 
     def build_ssm_options
       criteria = transform_filter(@filter)
       command = build_command(@command)
-      criteria.merge(
-        document_name: "AWS-RunShellScript",
-        # document_name: "AWS-RunPowerShellScript",
+      options = criteria.merge(
+        document_name: "AWS-RunShellScript", # default
         comment: "sonic #{ARGV.join(' ')}",
-        parameters: {
-          "commands" => command
-        }
+        parameters: { "commands" => command }
       )
+      param_options = params["send_command"].deep_symbolize_keys
+      options.merge(param_options)
+    end
+
+    def params
+      @params ||= Param.new.data
     end
 
     #
@@ -174,10 +202,20 @@ EOL
       text =~ /i-.{17}/ || text =~ /i-.{8}/
     end
 
-    def display_list_command(command_id)
+    def display_ssm_commands(command_id, ssm_options)
       list_command = "aws ssm list-commands --command-id #{command_id}"
       UI.say list_command
-      copy_paste_clipboard(list_command)
+
+      if ssm_options[:instance_ids]
+        ssm_options[:instance_ids].each do |instance_id|
+          get_command = "aws ssm get-command-invocation --command-id #{command_id} --instance-id #{instance_id}"
+          UI.say get_command
+        end
+      else
+        get_command = "aws ssm get-command-invocation --command-id #{command_id} --instance-id XXX"
+        UI.say get_command
+      end
+      # copy_paste_clipboard(list_command)
     end
 
     def copy_paste_clipboard(command)

@@ -20,7 +20,7 @@ module Sonic
       Ssh.new(identifier, options.merge(command: command)).run
     end
 
-    desc "ecs-exec [ECS_SERVICE]", "docker exec into running docker container associated with the service on a container instance"
+    desc "ecs_exec [ECS_SERVICE]", "docker exec into running docker container associated with the service on a container instance"
     long_desc Help.text(:ecs_exec)
     bastion_option.call
     cluster_option.call
@@ -29,7 +29,7 @@ module Sonic
     end
 
     # Cannot name the command run because that is a reserved Thor keyword :(
-    desc "ecs-run [ECS_SERVICE]", "docker run with the service on a container instance"
+    desc "ecs_run [ECS_SERVICE]", "docker run with the service on a container instance"
     long_desc Help.text(:ecs_run)
     bastion_option.call
     cluster_option.call
@@ -42,7 +42,7 @@ module Sonic
     option :zero_warn, type: :boolean, default: true, desc: "Warns user when no instances found"
     # filter - Filter ec2 instances by tag name or instance_ids separated by commas
     def run_command(filter, *command)
-      RunCommand.new(command, options.merge(filter: filter)).run_command
+      RunCommand.new(command, options.merge(filter: filter)).execute
     end
 
     desc "list [FILTER]", "lists ec2 instances"

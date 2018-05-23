@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Sonic::VERSION
   spec.authors       = ["Tung Nguyen"]
   spec.email         = ["tung@boltops.com"]
-  spec.description   = "Multi-functional tool to manage AWS infrastructure"
+  spec.summary       = "Multi-functional tool to manage AWS infrastructure"
   spec.homepage      = "http://sonic-screwdriver.cloud/"
   spec.license       = "MIT"
 
@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "aws-sdk-ecs"
   spec.add_dependency "aws-sdk-ssm"
   spec.add_dependency "tty-prompt"
+  spec.add_dependency "activesupport"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
