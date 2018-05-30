@@ -1,11 +1,11 @@
 ---
-title: sonic run_command
+title: sonic command send
 reference: true
 ---
 
 ## Usage
 
-    sonic run_command [FILTER] [COMMAND]
+    sonic command send [FILTER] [COMMAND]
 
 ## Description
 
@@ -15,10 +15,10 @@ Run as a command across a list of servers. A filter must be provided.  The filte
 
 Examples:
 
-    $ sonic run_command hi-web-prod uptime
-    $ sonic run_command hi-web-prod,hi-worker-prod,hi-clock-prod uptime
-    $ sonic run_command i-030033c20c54bf149,i-030033c20c54bf150 uname -a
-    $ sonic run_command i-030033c20c54bf149 file://hello.sh
+    $ sonic command send hi-web-prod uptime
+    $ sonic command send hi-web-prod,hi-worker-prod,hi-clock-prod uptime
+    $ sonic command send i-030033c20c54bf149,i-030033c20c54bf150 uname -a
+    $ sonic command send i-030033c20c54bf149 file://hello.sh
 
 You cannot mix instance ids and tag names in the filter.
 
@@ -28,7 +28,5 @@ You cannot mix instance ids and tag names in the filter.
 ```
 [--zero-warn], [--no-zero-warn]  # Warns user when no instances found
                                  # Default: true
-[--verbose], [--no-verbose]      
-[--noop], [--no-noop]            
 ```
 
