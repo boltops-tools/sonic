@@ -7,6 +7,7 @@ module Sonic
   autoload :Help, 'sonic/help'
   autoload :AwsService, 'sonic/aws_service'
   autoload :CLI, 'sonic/cli'
+  autoload :BaseCommand, 'sonic/base_command'
   autoload :Command, 'sonic/command'
   autoload :Docker, 'sonic/docker'
   autoload :RunCommand, 'sonic/run_command'
@@ -18,6 +19,7 @@ module Sonic
   autoload :Checks, 'sonic/checks'
   autoload :Completion, "sonic/completion"
   autoload :Completer, "sonic/completer"
+  autoload :Ecs, "sonic/ecs"
 
   extend Core
 end
