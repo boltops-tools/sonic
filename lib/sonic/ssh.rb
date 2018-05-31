@@ -14,11 +14,11 @@ module Sonic
       @user, @identifier = extract_user!(identifier) # extracts/strips user from identifier
       # While --user option is supported at the class level, don't expose at the CLI level
       # to encourage users to use user@host notation.
-      @user ||= options[:user] || setting.data["bastion"]["user"]
+      @user ||= options[:user] || settings["bastion"]["user"]
 
       @service = @identifier # always set service even though it's not always used as the identifier
-      @cluster = options[:cluster] || setting.default_cluster(@service)
-      @bastion = options[:bastion] || setting.default_bastion(@bastion)
+      @cluster = options[:cluster] || settings["ecs_service_cluster_map"][@service] || "default"
+      @bastion = options[:bastion] || settings["bastion"]["host"]
     end
 
     def run
@@ -84,16 +84,28 @@ module Sonic
     end
 
 private
-    def setting
-      @setting ||= Setting.new
+    # direct access to settings data
+    def settings
+      @settings ||= Setting.new.data
     end
 
     # Returns Array of flags.
     # Example:
     #   ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null"]
     def ssh_options
-      host_key_check_options = setting.host_key_check_options
       keys_option + host_key_check_options
+    end
+
+    # By default bypass strict host key checking for convenience.
+    # But user can overrride this.
+    def host_key_check_options
+      if settings["bastion"]["host_key_check"] == true
+        []
+      else
+        # settings["bastion"]["host_key_check"] nil will disable checking also
+        # disables host key checking
+        %w[-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null]
+      end
     end
 
     # Will prepend the bastion host if required
