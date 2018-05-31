@@ -50,7 +50,7 @@ module Sonic
     #
     # Returns the ECS cluster name.
     def default_cluster(service)
-      service_cluster = data["service_cluster"]
+      service_cluster = data["ecs_service_cluster_map"]
       service_cluster[service] || service_cluster["default"]
     end
 
@@ -58,8 +58,8 @@ module Sonic
     # Otherwise the user get confusing and scary aws-sdk-core/param_validator errors:
     # Example: https://gist.github.com/sonic/67b9a68a77363b908d1c36047bc2709a
     def ensure_default_cluster!(data)
-      unless data["service_cluster"]["default"]
-        data["service_cluster"]["default"] = "default"
+      unless data["ecs_service_cluster_map"]["default"]
+        data["ecs_service_cluster_map"]["default"] = "default"
       end
       data
     end

@@ -1,3 +1,6 @@
 bastion:
   host_key_check: false
   user: ec2-user
+
+ecs_service_cluster_map:
+  default: default
