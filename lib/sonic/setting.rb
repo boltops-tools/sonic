@@ -15,11 +15,23 @@ module Sonic
       default_file = File.expand_path("../default/settings.yml", __FILE__)
       default = yaml_file(default_file)
 
-      data = default.deep_merge(user.deep_merge(project))
+      data = merge(default, user, project)
       ensure_default_cluster!(data)
+
+      if ENV['DEBUG_SETTINGS']
+        puts "settings data:"
+        pp data
+      end
       data
     end
     memoize :data
+
+    def merge(*hashes)
+      hashes.inject({}) do |result, hash|
+        # note: important to compact for keys with nil value
+        result.deep_merge(hash.compact)
+      end
+    end
 
     # Any empty file will result in "false".  Lets ensure that an empty file
     # loads an empty hash instead.
