@@ -4,24 +4,24 @@ title: ECS Run
 
 The nice thing about the previous `ecs-exec` command we covered is that it allows you to get into the actual running container and debug with the exact environment that is on production.  The cavaet with doing this is that we are affecting a live process in actual use. If you do something inadvertently wrong on the server it could affect users.  Sometimes it is nice to start up a new container with the exact same environment as the other running containers but be isolated so you cannot affect live requests.
 
-The `sonic ecs-run` command is similar to the `sonic ecs-exec` command except it'll run a brand new container with the same environment variables as the task associated with the service. This allows you to debug in a container with the exact environment variables as the running tasks/containers without affecting the live service. So this is safer since you will not be able to mess up a live container that is in service.
+The `sonic ecs sh` command is similar to the `sonic ecs exec` command except it'll run a brand new container with the same environment variables as the task associated with the service. This allows you to debug in a container with the exact environment variables as the running tasks/containers without affecting the live service. So this is safer since you will not be able to mess up a live container that is in service.
 
-### sonic ecs-run
+### sonic ecs sh
 
 ```sh
-sonic ecs-run [ECS_SERVICE] --cluster [ECS_CLUSTER]
+sonic ecs sh [ECS_SERVICE] --cluster [ECS_CLUSTER]
 ```
 
 Here's an example:
 
 ```sh
-sonic ecs-run hi-web
+sonic ecs sh hi-web
 ```
 
 You see something like this:
 
 ```sh
-$ sonic ecs-run hi-web
+$ sonic ecs sh hi-web
 Running: scp -r /tmp/sonic ec2-user@34.211.195.71:/tmp/sonic  > /dev/null
 Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 => ssh -t ec2-user@34.211.195.71 bash /tmp/sonic/bash_scripts/docker-run.sh
@@ -44,7 +44,7 @@ $
 In the above output a WEBrick server gets started.  The reason this happens is because the Dockerfile default `CMD` in this project happens to start a webserver.  Most of the time you probably want to start shell for debugging.  To start a bash shell just tack the bash command at the end.
 
 ```sh
-$ sonic ecs-run hi-web bash
+$ sonic ecs sh hi-web bash
 Running: scp -r /tmp/sonic ec2-user@34.211.195.71:/tmp/sonic  > /dev/null
 Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 => ssh -t ec2-user@34.211.195.71 bash /tmp/sonic/bash_scripts/docker-run.sh bash
@@ -70,7 +70,7 @@ $
 The output shows that there is this extra runnning container called `cocky_goldstine`.  This name does not look like the typical ECS managed running docker container: `ecs-hi-web-11-web-9eb081978abad89a9701`.  This is how we know that this is a container outside of ECS control.
 
 ```sh
-$ sonic ecs-run hi-web bash
+$ sonic ecs sh hi-web bash
 Running: scp -r /tmp/sonic ec2-user@34.211.195.71:/tmp/sonic  > /dev/null
 Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 => ssh -t ec2-user@34.211.195.71 bash /tmp/sonic/bash_scripts/docker-run.sh bash
@@ -81,7 +81,7 @@ Connection to 34.211.195.71 closed.
 $
 ```
 
-Let's exit out of the first terminal where you ran the original `sonic ecs-run` command and then list the running containers again.
+Let's exit out of the first terminal where you ran the original `sonic ecs sh` command and then list the running containers again.
 
 ```sh
 $ sonic ssh hi-web docker ps
@@ -93,7 +93,7 @@ bf646ae7789a        amazon/amazon-ecs-agent:latest                 "/agent"     
 $
 ```
 
-Zapped!  The `cocky_goldstine` container that was created with `sonic ecs-run` is no more.
+Zapped!  The `cocky_goldstine` container that was created with `sonic ecs sh` is no more.
 
 <a id="prev" class="btn btn-basic" href="{% link _docs/tutorial-ecs-exec.md %}">Back</a>
 <a id="next" class="btn btn-primary" href="{% link _docs/tutorial-execute.md %}">Next Step</a>

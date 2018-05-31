@@ -12,7 +12,7 @@ You can append `help`, `-h` or `--help` to the end of any command to get more he
 
 ```sh
 sonic ssh help
-sonic ecs-exec --help
+sonic ecs exec --help
 sonic execute -h
 ```
 

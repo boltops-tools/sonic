@@ -10,4 +10,4 @@ Examples:
 run command you will need to put the command in single quotes.  This is due to
 the way Thor (what this tool uses) parses options.
 
-    $ sonic ecs sh --cluster prod-hi hi-web-prod 'rake -T'
+    $ sonic ecs sh --cluster production-hi hi-web 'rake -T'

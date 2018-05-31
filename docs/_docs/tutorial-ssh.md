@@ -54,9 +54,9 @@ Polymorphic identifiers are convenient in case you happen to be on a dashboard w
 
 ```
 sonic ssh EC2_TAG_FILTER
-sonic ssh ECS_SERVICE --cluster stag
-sonic ssh ECS_CONTAINER_ID --cluster stag
-sonic ssh ECS_TASK_ID --cluster stag
+sonic ssh ECS_SERVICE --cluster staging
+sonic ssh ECS_CONTAINER_ID --cluster staging
+sonic ssh ECS_TASK_ID --cluster staging
 ```
 
 The EC2 tag filter uses the 'tag-value' filter as described in the [AWS describe-instances](http://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html) filter docs. This filter is independent of the tag-key filter, which means any EC2 tag value will match, regardless of the tag key name.  Sonic does not support spaces in the EC2 tag filter.

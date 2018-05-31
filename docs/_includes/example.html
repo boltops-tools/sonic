@@ -10,7 +10,7 @@
       <div class='col-md-offset-1 col-md-10'>
         <p>With one command you can go from your local machine into a live ECS running docker container. Boom!</p>
 {% highlight sh %}
-$ sonic ecs-exec hi-web-prod --cluster stag
+$ sonic ecs exec hi-web --cluster staging
 Running: scp -r /tmp/sonic ec2-user@ec2-52-24-216-170.us-west-2.compute.amazonaws.com:/tmp/sonic  > /dev/null
 => ssh -t ec2-user@ec2-52-24-216-170.us-west-2.compute.amazonaws.com bash /tmp/sonic/bash_scripts/docker-exec.sh
 root@b371924fce50:/app#

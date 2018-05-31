@@ -29,8 +29,8 @@ This project *tries* to adhere to [Semantic Versioning](http://semver.org/), eve
 - standardize filter to be first argument
 
 ## [1.0.0]
-- sonic ecs-exec
-- sonic ecs-run
+- sonic ecs exec
+- sonic ecs sh
 - sonic execute
 - sonic list
 - sonic ssh
