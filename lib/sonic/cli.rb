@@ -15,9 +15,10 @@ module Sonic
 
     desc "ssh [IDENTIFER]", "ssh into a instance using identifier. identifer can be several things: instance id, ec2 tag, ECS service name, etc"
     long_desc Help.text(:ssh)
-    method_option :keys, :aliases => '-i', :desc => "comma separated list of ssh private key paths"
-    method_option :retry, :aliases => '-r', :type => :boolean, :desc => "keep retrying the server login until successful. Useful when on newly launched instances."
+    option :keys, :aliases => '-i', :desc => "comma separated list of ssh private key paths"
+    option :retry, :aliases => '-r', :type => :boolean, :desc => "keep retrying the server login until successful. Useful when on newly launched instances."
     option :bastion, desc: "Bastion jump host to use.  Defaults to no bastion server."
+    option :cluster, desc: "ECS Cluster to use.  Default cluster is default"
     def ssh(identifier, *command)
       Ssh.new(identifier, options.merge(command: command)).run
     end
