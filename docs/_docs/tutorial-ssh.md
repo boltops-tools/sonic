@@ -69,9 +69,9 @@ service_cluster:
   hi-web-prod: prod
   hi-clock-prod: prod
   hi-worker-prod: prod
-  hi-web-stag: stag
+  hi-web: stag
   hi-clock-stag: stag
-  hi-worker-stag: stag
+  hi-worker: stag
 ```
 
 With these settings in place, the ECS identifier commands get shortened to become:
@@ -82,16 +82,16 @@ sonic ssh ECS_SERVICE
 sonic ssh ECS_TASK_ID
 ```
 
-It then becomes effortless to ssh into an EC2 Container Instance with the ECS service name.  For example, if the ECS service name is `hi-web-stag` then the command becomes.
+It then becomes effortless to ssh into an EC2 Container Instance with the ECS service name.  For example, if the ECS service name is `hi-web` then the command becomes.
 
 ```sh
-$ sonic ssh hi-web-stag
+$ sonic ssh hi-web
 # now you are on the container instance
 $ docker ps
 $ curl -s http://localhost:51678/v1/meta | jq .
 ```
 
-The `hi-web-stag` can be running on multiple container instances.  The `sonic ssh` command chooses the first container instance that it finds.  If you need to ssh into a specific container instance, then use the `sonic ssh` command with an instance id instead.
+The `hi-web` can be running on multiple container instances.  The `sonic ssh` command chooses the first container instance that it finds.  If you need to ssh into a specific container instance, then use the `sonic ssh` command with an instance id instead.
 
 You can also use the ECS container instance arn or task id to ssh into the machine.  Examples:
 

@@ -51,26 +51,26 @@ Here is a quick overview of sonic abilities:
 ```sh
 # ssh into an instance
 sonic ssh i-0f7f833131a51ce35
-sonic ssh hi-web-stag # ec2 tag
-sonic ssh hi-web-stag --cluster stag # ecs service name
-sonic ssh hi-web-stag --cluster stag  # ecs service name
+sonic ssh hi-web # ec2 tag
+sonic ssh hi-web --cluster stag # ecs service name
+sonic ssh hi-web --cluster stag  # ecs service name
 sonic ssh 7fbc8c75-4675-4d39-a5a4-0395ff8cd474 --cluster stag  # ECS container id
 sonic ssh 1ed12abd-645c-4a05-9acf-739b9d790170 --cluster stag  # ECS task id
 
 # docker exec to a running ECS docker container
-sonic ecs-exec hi-web-stag
+sonic ecs-exec hi-web
 
 # docker run with the same environment as the ECS docker running containers
-sonic ecs-run hi-web-stag
+sonic ecs-run hi-web
 
 # run command on 1 instance
 sonic execute i-0f7f833131a51ce35 uptime
 
-# run command on all instances tagged with hi-web-stag and worker
-sonic execute hi-web-stag,hi-worker-stag uptime
+# run command on all instances tagged with hi-web and worker
+sonic execute hi-web,hi-worker uptime
 
 # list ec2 instances
-sonic list hi-web-stag
+sonic list hi-web
 ```
 
 ## Contributing

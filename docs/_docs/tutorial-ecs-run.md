@@ -15,13 +15,13 @@ sonic ecs-run [ECS_SERVICE] --cluster [ECS_CLUSTER]
 Here's an example:
 
 ```sh
-sonic ecs-run hi-web-stag
+sonic ecs-run hi-web
 ```
 
 You see something like this:
 
 ```sh
-$ sonic ecs-run hi-web-stag
+$ sonic ecs-run hi-web
 Running: scp -r /tmp/sonic ec2-user@34.211.195.71:/tmp/sonic  > /dev/null
 Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 => ssh -t ec2-user@34.211.195.71 bash /tmp/sonic/bash_scripts/docker-run.sh
@@ -44,7 +44,7 @@ $
 In the above output a WEBrick server gets started.  The reason this happens is because the Dockerfile default `CMD` in this project happens to start a webserver.  Most of the time you probably want to start shell for debugging.  To start a bash shell just tack the bash command at the end.
 
 ```sh
-$ sonic ecs-run hi-web-stag bash
+$ sonic ecs-run hi-web bash
 Running: scp -r /tmp/sonic ec2-user@34.211.195.71:/tmp/sonic  > /dev/null
 Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 => ssh -t ec2-user@34.211.195.71 bash /tmp/sonic/bash_scripts/docker-run.sh bash
@@ -52,25 +52,25 @@ Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 root@56a495dbd5cd:/app#
 ```
 
-You are now in a docker container running exactly the same environment as the other running containers with the `hi-web-stag` service. While this looks similiar to the `ecs-exec` command this container is a brand new process and is isolated from any live request. You can do whatever you want in this container and experiment to your heart's content.
+You are now in a docker container running exactly the same environment as the other running containers with the `hi-web` service. While this looks similiar to the `ecs-exec` command this container is a brand new process and is isolated from any live request. You can do whatever you want in this container and experiment to your heart's content.
 
 We can prove that this is a brand new docker container that is outside of ECS' knowledge. Let's ssh into the same instance and take a look at all the running docker containers in another terminal.
 
 ```sh
-$ sonic ssh hi-web-stag docker ps
+$ sonic ssh hi-web docker ps
 => ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@34.211.195.71 docker ps
 Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 CONTAINER ID        IMAGE                                          COMMAND             CREATED             STATUS              PORTS                     NAMES
 29e7c1253c46        tongueroo/hi:ufo-2017-06-13T14-48-08-0a9eea5   "bash"              54 seconds ago      Up 53 seconds       3000/tcp                  cocky_goldstine
-fc4035f90bdc        tongueroo/hi:ufo-2017-06-13T14-48-08-0a9eea5   "bin/web"           About an hour ago   Up About an hour    0.0.0.0:32768->3000/tcp   ecs-hi-web-stag-11-web-9eb081978abad89a9701
+fc4035f90bdc        tongueroo/hi:ufo-2017-06-13T14-48-08-0a9eea5   "bin/web"           About an hour ago   Up About an hour    0.0.0.0:32768->3000/tcp   ecs-hi-web-11-web-9eb081978abad89a9701
 bf646ae7789a        amazon/amazon-ecs-agent:latest                 "/agent"            About an hour ago   Up About an hour                              ecs-agent
 $
 ```
 
-The output shows that there is this extra runnning container called `cocky_goldstine`.  This name does not look like the typical ECS managed running docker container: `ecs-hi-web-stag-11-web-9eb081978abad89a9701`.  This is how we know that this is a container outside of ECS control.
+The output shows that there is this extra runnning container called `cocky_goldstine`.  This name does not look like the typical ECS managed running docker container: `ecs-hi-web-11-web-9eb081978abad89a9701`.  This is how we know that this is a container outside of ECS control.
 
 ```sh
-$ sonic ecs-run hi-web-stag bash
+$ sonic ecs-run hi-web bash
 Running: scp -r /tmp/sonic ec2-user@34.211.195.71:/tmp/sonic  > /dev/null
 Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 => ssh -t ec2-user@34.211.195.71 bash /tmp/sonic/bash_scripts/docker-run.sh bash
@@ -84,11 +84,11 @@ $
 Let's exit out of the first terminal where you ran the original `sonic ecs-run` command and then list the running containers again.
 
 ```sh
-$ sonic ssh hi-web-stag docker ps
+$ sonic ssh hi-web docker ps
 => ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@34.211.195.71 docker ps
 Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 CONTAINER ID        IMAGE                                          COMMAND             CREATED             STATUS              PORTS                     NAMES
-fc4035f90bdc        tongueroo/hi:ufo-2017-06-13T14-48-08-0a9eea5   "bin/web"           About an hour ago   Up About an hour    0.0.0.0:32768->3000/tcp   ecs-hi-web-stag-11-web-9eb081978abad89a9701
+fc4035f90bdc        tongueroo/hi:ufo-2017-06-13T14-48-08-0a9eea5   "bin/web"           About an hour ago   Up About an hour    0.0.0.0:32768->3000/tcp   ecs-hi-web-11-web-9eb081978abad89a9701
 bf646ae7789a        amazon/amazon-ecs-agent:latest                 "/agent"            About an hour ago   Up About an hour                              ecs-agent
 $
 ```

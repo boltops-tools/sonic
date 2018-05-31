@@ -37,7 +37,7 @@ For the `sonic ecs-*` commands to work `jq` is required on the server side. This
 One way to install `jq` quickly is by using the `sonic execute` command.  For example:
 
 ```sh
-sonic execute hi-web-stag yum install -y jq
+sonic execute hi-web yum install -y jq
 ```
 
 It is recommended that you install `jq` with the UserData script or bake it into the AMI though.

@@ -13,7 +13,7 @@ sonic execute [FILTER] [COMMAND]
 Examples:
 
 ```sh
-sonic execute hi-web-stag uptime
+sonic execute hi-web uptime
 sonic execute hi-web-prod uptime
 sonic execute i-030033c20c54bf149,i-030033c20c54bf150 uname -a
 sonic execute i-030033c20c54bf149 file://hello.sh
@@ -22,13 +22,13 @@ sonic execute i-030033c20c54bf149 file://hello.sh
 Let's do something more useful:
 
 ```sh
-sonic execute hi-web-stag yum install -y curl
+sonic execute hi-web yum install -y curl
 ```
 
 The output of the command will show a useful `aws ssm list-commands` command to get status of the requested command.
 
 ```sh
-$ sonic execute hi-web-stag uptime
+$ sonic execute hi-web uptime
 Command sent to AWS SSM. To check the details of the command:
 aws ssm list-commands --command-id 4133e5eb-aa18-40dd-be25-a176eb15e515
 Pro tip: the aws ssm command is already in your copy/paste clipboard.
@@ -61,7 +61,7 @@ echo "hello world"
 Here's how you run that file:
 
 ```sh
-sonic execute hi-web-stag file://hi.sh
+sonic execute hi-web file://hi.sh
 ```
 
 The file gets read by `sonic execute` and sent to EC2 Run Command to be executed.

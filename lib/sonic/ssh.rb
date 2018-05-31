@@ -14,7 +14,7 @@ module Sonic
       @user, @identifier = extract_user!(identifier) # extracts/strips user from identifier
       # While --user option is supported at the class level, don't expose at the CLI level
       # to encourage users to use user@host notation.
-      @user ||= options[:user] || setting.data["user"]
+      @user ||= options[:user] || setting.data["bastion"]["user"]
 
       @service = @identifier # always set service even though it's not always used as the identifier
       @cluster = options[:cluster] || setting.default_cluster(@service)

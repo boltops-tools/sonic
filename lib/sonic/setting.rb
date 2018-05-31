@@ -1,29 +1,30 @@
 require 'yaml'
+require 'memoist'
+require 'active_support/core_ext/hash'
 
 module Sonic
   class Setting
+    extend Memoist
+
     def data
-      return @data if @data
+      settings_file = Sonic.profile || 'default'
+      settings_file += ".yml"
 
-      project_file = "#{Sonic.root}/.sonic/settings.yml"
-      project = File.exist?(project_file) ? load_yaml_file(project_file) : {}
-
-      user_file = "#{home}/.sonic/settings.yml"
-      user = File.exist?(user_file) ? load_yaml_file(user_file) : {}
-
+      project = yaml_file("#{Sonic.root}/.sonic/#{settings_file}")
+      user = yaml_file("#{home}/.sonic/#{settings_file}")
       default_file = File.expand_path("../default/settings.yml", __FILE__)
-      default = load_yaml_file(default_file)
+      default = yaml_file(default_file)
 
-      @data = default.merge(user.merge(project))[Sonic.env]
-
-      ensure_default_cluster!(@data)
-
-      @data
+      data = default.deep_merge(user.deep_merge(project))
+      ensure_default_cluster!(data)
+      data
     end
+    memoize :data
 
     # Any empty file will result in "false".  Lets ensure that an empty file
     # loads an empty hash instead.
-    def load_yaml_file(path)
+    def yaml_file(path)
+      return {} unless File.exist?(path)
       YAML.load_file(path) || {}
     end
 
@@ -34,21 +35,18 @@ module Sonic
     #
     # The settings.yml format:
     #
-    # service_cluster:
-    #   default: stag
-    #   hi-web-prod: prod
-    #   hi-clock-prod: prod
-    #   hi-worker-prod: prod
-    #   hi-web-stag: stag
-    #   hi-clock-stag: stag
-    #   hi-worker-stag: stag
+    # service_cluster_map:
+    #   default: staging
+    #   hi-web: production
+    #   hi-clock: production
+    #   hi-worker: production
     #
     # Examples
     #
-    #   default_cluster('hi-web-prod')
-    #   # => 'prod'
+    #   default_cluster('hi-web')
+    #   # => 'production'
     #   default_cluster('whatever')
-    #   # => 'stag'
+    #   # => 'staging'
     #
     # Returns the ECS cluster name.
     def default_cluster(service)
@@ -76,20 +74,20 @@ module Sonic
     #
     # Examples
     #
-    #   default_bastion('stag')
+    #   default_bastion('staging')
     #   # => 'bastion-stag.mydomain.com'
     #   default_bastion('whatever')
     #   # => 'bastion.mydomain.com'
     #
     # Returns the bastion host that is mapped to the cluster
     def default_bastion(cluster)
-      data["bastion"]
+      data["bastion"]["host"]
     end
 
     # By default bypass strict host key checking for convenience.
     # But user can overrride this.
     def host_key_check_options
-      if data["host_key_check"] == true
+      if data["bastion"]["host_key_check"] == true
         []
       else
         # disables host key checking

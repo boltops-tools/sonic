@@ -17,13 +17,13 @@ sonic ecs-exec [ECS_SERVICE] --cluster [ECS_CLUSTER]
 Here's a concrete example:
 
 ```sh
-sonic ecs-exec hi-web-stag --cluster stag
+sonic ecs-exec hi-web --cluster stag
 ```
 
 You should see something like this:
 
 ```sh
-$ sonic ecs-exec hi-web-stag --cluster stag
+$ sonic ecs-exec hi-web --cluster stag
 Running: scp -r /tmp/sonic ec2-user@34.211.195.71:/tmp/sonic  > /dev/null
 Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 => ssh -t ec2-user@34.211.195.71 bash /tmp/sonic/bash_scripts/docker-exec.sh
@@ -38,7 +38,7 @@ What you see in the last line above is a bash prompt because you are in a bash s
 Here are examples to show what is possible:
 
 ```
-$ sonic ecs-exec hi-web-stag bash
+$ sonic ecs-exec hi-web bash
 # You're in the docker container now
 $ ls # check out some files to make sure you're the right place
 $ ps auxxx | grep puma # is the web process up?
@@ -49,7 +49,7 @@ $ bundle exec rails c # start up a rails console to debug
 You can also pass in bundle exec rails console if you want to get to that as quickly as possible.
 
 ```
-$ sonic ecs-exec hi-web-stag bundle exec rails console
+$ sonic ecs-exec hi-web bundle exec rails console
 # You're a rails console in the docker container now
 > User.count
 ```
@@ -68,13 +68,13 @@ As mentioned in the [previous section]({% link _docs/tutorial-ssh.md %}) and als
 ```yaml
 service_cluster:
   default: stag
-  hi-web-stag: stag
+  hi-web: stag
 ```
 
 This makes the command consise and memorable.
 
 ```sh
-sonic ecs-exec hi-web-stag
+sonic ecs-exec hi-web
 ```
 
 The rest of this section assumes that you have the `~/.sonic/settings.yml` set up.
@@ -82,7 +82,7 @@ The rest of this section assumes that you have the `~/.sonic/settings.yml` set u
 You can also tack on a command at the end of the `ecs-exec` command to be run as a one off instead of starting a bash shell. Example:
 
 ```
-$ sonic ecs-exec hi-web-stag uname -a
+$ sonic ecs-exec hi-web uname -a
 Running: scp -r /tmp/sonic ec2-user@34.211.195.71:/tmp/sonic  > /dev/null
 Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 => ssh -t ec2-user@34.211.195.71 bash /tmp/sonic/bash_scripts/docker-exec.sh uname -a
