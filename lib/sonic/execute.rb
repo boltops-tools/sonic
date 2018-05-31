@@ -29,8 +29,9 @@ module Sonic
         return unless instances_count > 0
 
         success = nil
-        puts "ssm_options:"
+        puts "Sending command to SSM with options:"
         puts YAML.dump(ssm_options.deep_stringify_keys)
+        puts
         begin
           resp = send_command(ssm_options)
           command_id = resp.command.command_id
@@ -47,6 +48,7 @@ module Sonic
       # OF COMMANDS THAT WILL LEAD TO THE OUTPUT OF EACH INSTANCE.
       UI.say "Command sent to AWS SSM. To check the details of the command:"
       display_ssm_commands(command_id, ssm_options)
+      puts
       wait(command_id)
       display_ssm_output(command_id, ssm_options)
     end
@@ -54,7 +56,7 @@ module Sonic
     def wait(command_id)
       ongoing_states = ["Pending", "InProgress", "Delayed"]
 
-      print "waiting for ssm command to finish..."
+      print "Waiting for ssm command to finish..."
       resp = ssm.list_commands(command_id: command_id)
       status = resp["commands"].first["status"]
       while ongoing_states.include?(status)
@@ -64,6 +66,7 @@ module Sonic
         print '.'
       end
       puts
+      puts
     end
 
     def display_ssm_output(command_id, ssm_options)
@@ -71,13 +74,25 @@ module Sonic
       resp = ssm.get_command_invocation(
         command_id: command_id, instance_id: instance_id
       )
-      puts "status: #{resp["status"]}"
+      puts "Command status: #{colorized_status(resp["status"])}"
       ssm_output(resp, "output")
       ssm_output(resp, "error")
     end
 
+    def colorized_status(status)
+      case status
+      when "Success"
+        status.colorize(:green)
+      when "Failed"
+        status.colorize(:red)
+      else
+        status
+      end
+    end
+
     # type: output or error
     def ssm_output(resp, type)
+      puts "Command standard #{type}:"
       content_key = "standard_#{type}_content"
       s3_key = "standard_#{type}_url"
 
@@ -136,12 +151,12 @@ module Sonic
         comment: "sonic #{ARGV.join(' ')}"[0..99], # comment has a max of 100 chars
         parameters: { "commands" => command }
       )
-      param_options = params["send_command"].deep_symbolize_keys
-      options.merge(param_options)
+      settings_options = settings["send_command"] || {}
+      options.merge(settings_options.deep_symbolize_keys)
     end
 
-    def params
-      @params ||= Param.new.data
+    def settings
+      @settings ||= Setting.new.data
     end
 
     #
@@ -243,7 +258,7 @@ You can use the following command to check registered instances to SSM.
       instances = List.new(@options).instances
       if instances.count == 0
         message = <<-EOL
-  Unable to find any instances with filter #{@filter.join(',')}.
+Unable to find any instances with filter #{@filter.join(',')}.
   Are you sure you specify the filter with either a EC2 tag or list instance ids?
   If you are using ECS identifiers, they are not supported with this command.
 EOL
@@ -264,12 +279,12 @@ EOL
     end
 
     def display_ssm_commands(command_id, ssm_options)
-      list_command = "aws ssm list-commands --command-id #{command_id}"
+      list_command = "  aws ssm list-commands --command-id #{command_id}"
       UI.say list_command
 
       return unless ssm_options[:instance_ids]
       ssm_options[:instance_ids].each do |instance_id|
-        get_command = "aws ssm get-command-invocation --command-id #{command_id} --instance-id #{instance_id}"
+        get_command = "  aws ssm get-command-invocation --command-id #{command_id} --instance-id #{instance_id}"
         UI.say get_command
       end
       # copy_paste_clipboard(list_command)
