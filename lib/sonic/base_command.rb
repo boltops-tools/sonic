@@ -75,7 +75,7 @@ module Sonic
 
       # meant to be overriden
       def website
-        ""
+        "http://sonic-screwdriver.cloud"
       end
     end
   end

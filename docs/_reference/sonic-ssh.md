@@ -11,10 +11,10 @@ reference: true
 
 ssh into a instance using identifier. identifer can be several things: instance id, ec2 tag, ECS service name, etc
 
-Ssh quicky into an EC2 instance using an identifier. The identifier can be many things. Examples of valid identifiers:
+Ssh into an EC2 instance with an identifier. The identifier can be many things. Examples of valid identifiers:
 
 * EC2 instance id. Example: i-067c5e3f026c1e801
-* EC2 tag value. Any tag value is search, the tag key does not matter only the tag value matters. Example: hi-web-prod
+* EC2 tag value. Any tag value is search, the tag key does not matter only the tag value matters. Example: hi-web
 * ECS service. Example: my-ecs-service
 * ECS container instance id. Example: 7fbc8c75-4675-4d39-a5a4-0395ff8cd474
 * ECS task id. Example: 1ed12abd-645c-4a05-9acf-739b9d790170
@@ -24,12 +24,12 @@ When using ecs identifiers the `--cluster` option is required or can be set in ~
 Examples:
 
     $ sonic ssh i-067c5e3f026c1e801
-    $ sonic ssh hi-web-prod
+    $ sonic ssh hi-web
     $ sonic ssh --cluster my-cluster my-ecs-service
     $ sonic ssh 7fbc8c75-4675-4d39-a5a4-0395ff8cd474
     $ sonic ssh 1ed12abd-645c-4a05-9acf-739b9d790170
 
-Sonic ssh builds up the ssh command and calls it. For example, the following commands:
+Sonic ssh builds up the ssh command and shells out to it. For example, the following commands:
 
     sonic ssh i-027363802c6ff314f
 
@@ -71,6 +71,8 @@ Here's what the output looks like:
      17:57:59 up 37 min,  0 users,  load average: 0.00, 0.02, 0.00
     Connection to 34.211.223.3 closed.
     $
+
+You can also set the bastion host and other options with a [settings file](http://sonic-screwdriver.cloud/docs/settings/).
 
 
 ## Options
