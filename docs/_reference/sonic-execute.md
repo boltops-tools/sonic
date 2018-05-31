@@ -5,7 +5,7 @@ reference: true
 
 ## Usage
 
-    sonic send [FILTER] [COMMAND]
+    sonic execute [FILTER] [COMMAND]
 
 ## Description
 
@@ -15,10 +15,10 @@ Run as a command across a list of servers. A filter must be provided.  The filte
 
 Examples:
 
-    $ sonic command send hi-web-prod uptime
-    $ sonic command send hi-web-prod,hi-worker-prod,hi-clock-prod uptime
-    $ sonic command send i-030033c20c54bf149,i-030033c20c54bf150 uname -a
-    $ sonic command send i-030033c20c54bf149 file://hello.sh
+    $ sonic execute hi-web-prod uptime
+    $ sonic execute hi-web-prod,hi-worker-prod,hi-clock-prod uptime
+    $ sonic execute i-030033c20c54bf149,i-030033c20c54bf150 uname -a
+    $ sonic execute i-030033c20c54bf149 file://hello.sh
 
 You cannot mix instance ids and tag names in the filter.
 
