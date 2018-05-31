@@ -22,7 +22,7 @@ module Sonic
       ssm_options = build_ssm_options
       if @options[:noop]
         UI.noop = true
-        command_id = "fake command id"
+        command_id = "fake command id for noop mode"
         success = true # fake it for specs
       else
         instances_count = check_instances
@@ -70,7 +70,16 @@ module Sonic
     end
 
     def display_ssm_output(command_id, ssm_options)
-      instance_id = ssm_options[:instance_ids].first
+      instance_ids = ssm_options[:instance_ids]
+      return unless instance_ids && instance_ids.size > 0
+
+      instance_id = instance_ids.first
+      if ssm_options[:instance_ids].size > 1
+        puts "Multiple instance targets. Only displaying output for #{instance_id}."
+      else
+        puts "Displaying output for #{instance_id}."
+      end
+
       resp = ssm.get_command_invocation(
         command_id: command_id, instance_id: instance_id
       )
