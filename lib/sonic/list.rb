@@ -22,6 +22,9 @@ module Sonic
         # ERROR: The instance ID 'i-066b140d9479e9682' does not exist
         UI.error(e.message)
         exit 1
+      rescue Aws::EC2::Errors::InvalidInstanceIDMalformed => e
+        UI.error(e.message)
+        exit 1
       end
       instances
     end

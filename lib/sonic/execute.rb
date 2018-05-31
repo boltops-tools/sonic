@@ -51,6 +51,7 @@ module Sonic
       puts
       wait(command_id)
       display_ssm_output(command_id, ssm_options)
+      display_console_url(command_id)
     end
 
     def wait(command_id)
@@ -65,7 +66,7 @@ module Sonic
         sleep 1
         print '.'
       end
-      puts
+      puts "\nCommand finished."
       puts
     end
 
@@ -86,6 +87,17 @@ module Sonic
       puts "Command status: #{colorized_status(resp["status"])}"
       ssm_output(resp, "output")
       ssm_output(resp, "error")
+      puts
+    end
+
+    def display_console_url(command_id)
+      region = `aws configure get region`.strip rescue 'us-east-1'
+      console_url = "https://#{region}.console.aws.amazon.com/systems-manager/run-command/#{command_id}"
+      puts "To see the more output details visit:"
+      puts "  #{console_url}"
+      puts
+      copy_paste_clipboard(console_url)
+      UI.say "Pro tip: the console url is already in your copy/paste clipboard."
     end
 
     def colorized_status(status)
@@ -242,6 +254,7 @@ You can use the following command to check registered instances to SSM.
       EOS
       UI.warn(message)
       copy_paste_clipboard(ssm_describe_command)
+      UI.say "Pro tip: ssm describe-instance-information already in your copy/paste clipboard."
     end
 
     def file_path?(command)
@@ -296,13 +309,11 @@ EOL
         get_command = "  aws ssm get-command-invocation --command-id #{command_id} --instance-id #{instance_id}"
         UI.say get_command
       end
-      # copy_paste_clipboard(list_command)
     end
 
     def copy_paste_clipboard(command)
       return unless RUBY_PLATFORM =~ /darwin/
       system("echo '#{command}' | pbcopy")
-      UI.say "Pro tip: the aws ssm command is already in your copy/paste clipboard."
     end
   end
 end
