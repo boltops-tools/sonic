@@ -12,6 +12,7 @@ module Sonic
 
     class_option :verbose, type: :boolean
     class_option :noop, type: :boolean
+
     desc "ssh [IDENTIFER]", "ssh into a instance using identifier. identifer can be several things: instance id, ec2 tag, ECS service name, etc"
     long_desc Help.text(:ssh)
     method_option :keys, :aliases => '-i', :desc => "comma separated list of ssh private key paths"

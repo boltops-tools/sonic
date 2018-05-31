@@ -66,7 +66,7 @@ module Sonic
         unless website.empty?
           full_command = [command.ancestor_name, command.name].compact.join('-')
           url = "#{website}/reference/sonic-#{full_command}"
-          long_desc += "\n\nAlso available at: #{url}"
+          long_desc += "\n\nHelp also available at: #{url}"
         end
 
         command.long_description = long_desc
