@@ -10,7 +10,7 @@ module Sonic
   autoload :BaseCommand, 'sonic/base_command'
   autoload :Command, 'sonic/command'
   autoload :Docker, 'sonic/docker'
-  autoload :RunCommand, 'sonic/run_command'
+  autoload :Execute, 'sonic/execute'
   autoload :Param, 'sonic/param'
   autoload :List, 'sonic/list'
   autoload :Setting, 'sonic/setting'

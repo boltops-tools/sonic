@@ -1,11 +1,11 @@
 ---
-title: sonic ecs send
+title: sonic ecs sh
 reference: true
 ---
 
 ## Usage
 
-    sonic ecs send [ECS_SERVICE]
+    sonic ecs sh [ECS_SERVICE]
 
 ## Description
 

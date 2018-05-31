@@ -12,9 +12,9 @@ module Sonic
     end
 
     # Cannot name the command run because that is a reserved Thor keyword :(
-    desc "send [ECS_SERVICE]", "docker run with the service on a container instance"
-    long_desc Help.text(:send)
-    def send(service, *command)
+    desc "sh [ECS_SERVICE]", "docker run with the service on a container instance"
+    long_desc Help.text(:sh)
+    def sh(service, *command)
       Docker.new(service, options.merge(command: command)).run
     end
   end

@@ -3,7 +3,7 @@ require 'yaml'
 require 'active_support/core_ext/hash'
 
 module Sonic
-  class RunCommand
+  class Execute
     include AwsService
 
     def initialize(command, options)

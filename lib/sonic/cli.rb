@@ -21,6 +21,14 @@ module Sonic
       Ssh.new(identifier, options.merge(command: command)).run
     end
 
+    desc "send [FILTER] [COMMAND]", "runs command across fleet of servers via AWS Run Command"
+    long_desc Help.text("command/send")
+    option :zero_warn, type: :boolean, default: true, desc: "Warns user when no instances found"
+    # filter - Filter ec2 instances by tag name or instance_ids separated by commas
+    def execute(filter, *command)
+      Execute.new(command, options.merge(filter: filter)).execute
+    end
+
     desc "list [FILTER]", "lists ec2 instances"
     long_desc Help.text(:list)
     option :header, type: :boolean, desc: "Displays header"

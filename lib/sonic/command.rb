@@ -5,7 +5,7 @@ module Sonic
     option :zero_warn, type: :boolean, default: true, desc: "Warns user when no instances found"
     # filter - Filter ec2 instances by tag name or instance_ids separated by commas
     def send(filter, *command)
-      RunCommand.new(command, options.merge(filter: filter)).execute
+      Commander.new(command, options.merge(filter: filter)).execute
     end
   end
 end
