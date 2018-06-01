@@ -1,6 +1,6 @@
 module Sonic
   class List
-    include AwsServices
+    include AwsService
 
     def initialize(options)
       @options = options
@@ -20,6 +20,9 @@ module Sonic
         instances.count # force eager loading
       rescue Aws::EC2::Errors::InvalidInstanceIDNotFound => e
         # ERROR: The instance ID 'i-066b140d9479e9682' does not exist
+        UI.error(e.message)
+        exit 1
+      rescue Aws::EC2::Errors::InvalidInstanceIDMalformed => e
         UI.error(e.message)
         exit 1
       end

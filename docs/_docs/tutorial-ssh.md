@@ -2,8 +2,6 @@
 title: SSH
 ---
 
-### SSH
-
 Sonic allows you to ssh into an instance quickly.
 
 Often when working with AWS EC2 it is helpful to ssh into an instance to debug.  To ssh into an instance, the first thing you do is go to the EC2 Console and grab the public IP address.
@@ -32,7 +30,7 @@ The above command effectively translates to:
 ssh ec2-user@52.24.216.170
 ```
 
-By default the user that sonic uses to log in to the server is `ec2-user`. You can override the user easily like so:
+By default the user that sonic uses to log in to the server is `ec2-user`. You can override the user as part of the sonic command like so:
 
 ```sh
 sonic ssh ubuntu@i-0f7f833131a51ce35
@@ -48,15 +46,15 @@ More information about sonic settings in available in the docs: [Settings]({% li
 
 ### Polymorphic Identifiers
 
-The `sonic ssh` command can auto-detect the proper IP address with a variety of different identifiers.  The identifier is not just limited to the instance id. The identifier can also be an EC2 tag-value filter, ECS service name, ECS container id or ECS task id.
+The `sonic ssh` command can auto-detect the proper IP address with a variety of different identifiers.  The identifier is not limited to the instance id. The identifier can be an EC2 tag-value filter, ECS service name, ECS container id or ECS task id.
 
 Polymorphic identifiers are convenient in case you happen to be on a dashboard with another identifier close by and handy.  Here are examples of identifiers that `sonic ssh` understands.
 
 ```
 sonic ssh EC2_TAG_FILTER
-sonic ssh ECS_SERVICE --cluster stag
-sonic ssh ECS_CONTAINER_ID --cluster stag
-sonic ssh ECS_TASK_ID --cluster stag
+sonic ssh ECS_SERVICE --cluster staging
+sonic ssh ECS_CONTAINER_ID --cluster staging
+sonic ssh ECS_TASK_ID --cluster staging
 ```
 
 The EC2 tag filter uses the 'tag-value' filter as described in the [AWS describe-instances](http://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html) filter docs. This filter is independent of the tag-key filter, which means any EC2 tag value will match, regardless of the tag key name.  Sonic does not support spaces in the EC2 tag filter.
@@ -64,14 +62,11 @@ The EC2 tag filter uses the 'tag-value' filter as described in the [AWS describe
 Notice, that when the `sonic ssh` is passed an ECS identifier then it also requires the ECS cluster name. The commands above with the ECS identifier are normally shorten further by configuring the a [settings]({% link _docs/settings.md %}) file.  Here's an example:
 
 ```yaml
-service_cluster:
+ecs_service_cluster_map:
   default: my-default-cluster
-  hi-web-prod: prod
-  hi-clock-prod: prod
-  hi-worker-prod: prod
-  hi-web-stag: stag
-  hi-clock-stag: stag
-  hi-worker-stag: stag
+  hi-web: production
+  hi-clock: production
+  hi-worker: production
 ```
 
 With these settings in place, the ECS identifier commands get shortened to become:
@@ -82,16 +77,16 @@ sonic ssh ECS_SERVICE
 sonic ssh ECS_TASK_ID
 ```
 
-It then becomes effortless to ssh into an EC2 Container Instance with the ECS service name.  For example, if the ECS service name is `hi-web-stag` then the command becomes.
+It then becomes effortless to ssh into an EC2 Container Instance with the ECS service name.  For example, if the ECS service name is `hi-web` then the command becomes.
 
 ```sh
-$ sonic ssh hi-web-stag
+$ sonic ssh hi-web
 # now you are on the container instance
 $ docker ps
 $ curl -s http://localhost:51678/v1/meta | jq .
 ```
 
-The `hi-web-stag` can be running on multiple container instances.  The `sonic ssh` command chooses the first container instance that it finds.  If you need to ssh into a specific container instance, then use the `sonic ssh` command with an instance id instead.
+The `hi-web` can be running on multiple container instances.  The `sonic ssh` command chooses the first container instance that it finds.  If you need to ssh into a specific container instance, then use the `sonic ssh` command with an instance id instead.
 
 You can also use the ECS container instance arn or task id to ssh into the machine.  Examples:
 
@@ -120,7 +115,7 @@ Can't ssh into the server yet.  Retrying until success.
 
 ### Specifying Custom Pem or Private Keys
 
-It is recommended that you use ssh-agent to specify a custom private key, covered here [3 SSH tips: Ssh-agent, Tunnel, and Escaping from the Dead](https://blog.boltops.com/2017/09/21/3-ssh-tips-ssh-agent-tunnel-and-escaping-from-the-dead).  You can specify the private key if you prefer with the `-i` option though.  Example:
+It is recommended that you use ssh-agent to specify a custom private key, covered here [3 SSH tips: Ssh-agent, Tunnel, and Escaping from the Dead](https://blog.boltops.com/2017/09/21/3-ssh-tips-ssh-agent-tunnel-and-escaping-from-the-dead).  But you can specify the private key if you prefer with the `-i` option though.  Example:
 
 ```sh
 $ sonic ssh -i ~/.ssh/id_rsa-custom i-0b21da68fff89937b

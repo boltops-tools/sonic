@@ -30,14 +30,14 @@ For more information about the Bolts Toolbelt or to get an installer for another
 
 For a small set of the commands there are server side dependencies.
 
-#### sonic ecs-* dependencies
+#### sonic ecs dependencies
 
-For the `sonic ecs-*` commands to work `jq` is required on the server side. This is covered in the [How It Works]({% link _docs/how-it-works.md %}) section.
+For the `sonic ecs` commands to work `jq` is required on the server side. This is covered in the [How It Works]({% link _docs/how-it-works.md %}) section.
 
 One way to install `jq` quickly is by using the `sonic execute` command.  For example:
 
 ```sh
-sonic execute hi-web-stag yum install -y jq
+sonic execute hi-web yum install -y jq
 ```
 
 It is recommended that you install `jq` with the UserData script or bake it into the AMI though.

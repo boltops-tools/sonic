@@ -1,6 +1,10 @@
+require 'colorize'
+require 'yaml'
+require 'active_support/core_ext/hash'
+
 module Sonic
   class Execute
-    include AwsServices
+    include AwsService
 
     def initialize(command, options)
       @command = command
@@ -18,37 +22,163 @@ module Sonic
       ssm_options = build_ssm_options
       if @options[:noop]
         UI.noop = true
-        command_id = "fake command id"
+        command_id = "fake command id for noop mode"
         success = true # fake it for specs
       else
         instances_count = check_instances
         return unless instances_count > 0
 
         success = nil
+        puts "Sending command to SSM with options:"
+        puts YAML.dump(ssm_options.deep_stringify_keys)
+        puts
         begin
-          resp = ssm.send_command(ssm_options)
+          resp = send_command(ssm_options)
           command_id = resp.command.command_id
           success = true
         rescue Aws::SSM::Errors::InvalidInstanceId => e
           ssm_invalid_instance_error_message(e)
         end
       end
-      if success
-        UI.say "Command sent to AWS SSM. To check the details of the command:"
-        display_list_command(command_id)
+
+      return unless success
+
+      # IF COMMAND IS ONLY ON A SINGLE INSTANCE THEN WILL DISPLAY A BUNCH OF
+      # INFO ON THE INSTANCE. IF ITS A LOT OF INSTANCES, THEN SHOW A SUMMARY
+      # OF COMMANDS THAT WILL LEAD TO THE OUTPUT OF EACH INSTANCE.
+      UI.say "Command sent to AWS SSM. To check the details of the command:"
+      display_ssm_commands(command_id, ssm_options)
+      puts
+      return if @options[:noop]
+      wait(command_id)
+      display_ssm_output(command_id, ssm_options)
+      display_console_url(command_id)
+    end
+
+    def wait(command_id)
+      ongoing_states = ["Pending", "InProgress", "Delayed"]
+
+      print "Waiting for ssm command to finish..."
+      resp = ssm.list_commands(command_id: command_id)
+      status = resp["commands"].first["status"]
+      while ongoing_states.include?(status)
+        resp = ssm.list_commands(command_id: command_id)
+        status = resp["commands"].first["status"]
+        sleep 1
+        print '.'
       end
+      puts "\nCommand finished."
+      puts
+    end
+
+    def display_ssm_output(command_id, ssm_options)
+      instance_ids = ssm_options[:instance_ids]
+      return unless instance_ids && instance_ids.size > 0
+
+      instance_id = instance_ids.first
+      if ssm_options[:instance_ids].size > 1
+        puts "Multiple instance targets. Only displaying output for #{instance_id}."
+      else
+        puts "Displaying output for #{instance_id}."
+      end
+
+      resp = ssm.get_command_invocation(
+        command_id: command_id, instance_id: instance_id
+      )
+      puts "Command status: #{colorized_status(resp["status"])}"
+      ssm_output(resp, "output")
+      ssm_output(resp, "error")
+      puts
+    end
+
+    def display_console_url(command_id)
+      region = `aws configure get region`.strip rescue 'us-east-1'
+      console_url = "https://#{region}.console.aws.amazon.com/systems-manager/run-command/#{command_id}"
+      puts "To see the more output details visit:"
+      puts "  #{console_url}"
+      puts
+      copy_paste_clipboard(console_url)
+      UI.say "Pro tip: the console url is already in your copy/paste clipboard."
+    end
+
+    def colorized_status(status)
+      case status
+      when "Success"
+        status.colorize(:green)
+      when "Failed"
+        status.colorize(:red)
+      else
+        status
+      end
+    end
+
+    # type: output or error
+    def ssm_output(resp, type)
+      content_key = "standard_#{type}_content"
+      s3_key = "standard_#{type}_url"
+
+      content = resp[content_key]
+      return if content.empty?
+
+      puts "Command standard #{type}:"
+      # "https://s3.amazonaws.com/lr-infrastructure-prod/ssm/commands/sonic/0a4f4bef-8f63-4235-8b30-ae296477261a/i-0b2e6e187a3f9ada9/awsrunPowerShellScript/0.awsrunPowerShellScript/stderr">
+      if content.include?("--output truncated--") && !resp[s3_key].empty?
+        s3_url = resp[s3_key]
+        info = s3_url.sub('https://s3.amazonaws.com/', '').split('/')
+        bucket = info[0]
+        key = info[1..-1].join('/')
+        resp = s3.get_object(bucket: bucket, key: key)
+        data = resp.body.read
+        puts data
+
+        path = "/tmp/sonic-output.txt"
+        puts "------"
+        puts "Output also written to #{path}"
+        IO.write(path, data)
+      else
+        puts content
+      end
+
+      # puts "#{s3_key}: #{resp[s3_key]}"
+    end
+
+    def send_command(options)
+      retries = 0
+
+      begin
+        resp = ssm.send_command(options)
+        # puts "NOOP FOR NOW"
+      rescue Aws::SSM::Errors::UnsupportedPlatformType
+        retries += 1
+        # toggle AWS-RunShellScript / AWS-RunPowerShellScript
+        options[:document_name] =
+          options[:document_name] == "AWS-RunShellScript" ?
+          "AWS-RunPowerShellScript" : "AWS-RunShellScript"
+
+        puts "#{$!}"
+        puts "Retrying with document_name #{options[:document_name]}"
+        puts "Retries: #{retries}"
+
+        retries <= 1 ? retry : raise
+      end
+
+      resp
     end
 
     def build_ssm_options
       criteria = transform_filter(@filter)
       command = build_command(@command)
-      criteria.merge(
-        document_name: "AWS-RunShellScript",
-        comment: "sonic #{ARGV.join(' ')}",
-        parameters: {
-          "commands" => command
-        }
+      options = criteria.merge(
+        document_name: "AWS-RunShellScript", # default
+        comment: "sonic #{ARGV.join(' ')}"[0..99], # comment has a max of 100 chars
+        parameters: { "commands" => command }
       )
+      settings_options = settings["send_command"] || {}
+      options.merge(settings_options.deep_symbolize_keys)
+    end
+
+    def settings
+      @settings ||= Setting.new.data
     end
 
     #
@@ -125,6 +255,7 @@ You can use the following command to check registered instances to SSM.
       EOS
       UI.warn(message)
       copy_paste_clipboard(ssm_describe_command)
+      UI.say "Pro tip: ssm describe-instance-information already in your copy/paste clipboard."
     end
 
     def file_path?(command)
@@ -136,7 +267,7 @@ You can use the following command to check registered instances to SSM.
     def file_path(command)
       path = command.first
       path = path.sub('file://', '')
-      path = "#{@options[:project_root]}/#{path}" if @options[:project_root]
+      path = "#{Sonic.root}/#{path}"
       path
     end
 
@@ -150,7 +281,7 @@ You can use the following command to check registered instances to SSM.
       instances = List.new(@options).instances
       if instances.count == 0
         message = <<-EOL
-  Unable to find any instances with filter #{@filter.join(',')}.
+Unable to find any instances with filter #{@filter.join(',')}.
   Are you sure you specify the filter with either a EC2 tag or list instance ids?
   If you are using ECS identifiers, they are not supported with this command.
 EOL
@@ -170,16 +301,20 @@ EOL
       text =~ /i-.{17}/ || text =~ /i-.{8}/
     end
 
-    def display_list_command(command_id)
-      list_command = "aws ssm list-commands --command-id #{command_id}"
+    def display_ssm_commands(command_id, ssm_options)
+      list_command = "  aws ssm list-commands --command-id #{command_id}"
       UI.say list_command
-      copy_paste_clipboard(list_command)
+
+      return unless ssm_options[:instance_ids]
+      ssm_options[:instance_ids].each do |instance_id|
+        get_command = "  aws ssm get-command-invocation --command-id #{command_id} --instance-id #{instance_id}"
+        UI.say get_command
+      end
     end
 
     def copy_paste_clipboard(command)
       return unless RUBY_PLATFORM =~ /darwin/
       system("echo '#{command}' | pbcopy")
-      UI.say "Pro tip: the aws ssm command is already in your copy/paste clipboard."
     end
   end
 end

@@ -1,25 +1,11 @@
-require 'thor'
-
 module Sonic
-  class Command < Thor
-    class << self
-      def dispatch(m, args, options, config)
-        # Allow calling for help via:
-        #   sonic command help
-        #   sonic command -h
-        #   sonic command --help
-        #   sonic command -D
-        #
-        # as well thor's normal way:
-        #
-        #   sonic help command
-        help_flags = Thor::HELP_MAPPINGS + ["help"]
-        if args.length > 1 && !(args & help_flags).empty?
-          args -= help_flags
-          args.insert(-2, "help")
-        end
-        super
-      end
+  class Command < BaseCommand
+    desc "send [FILTER] [COMMAND]", "runs command across fleet of servers via AWS Run Command"
+    long_desc Help.text("command/send")
+    option :zero_warn, type: :boolean, default: true, desc: "Warns user when no instances found"
+    # filter - Filter ec2 instances by tag name or instance_ids separated by commas
+    def send(filter, *command)
+      Commander.new(command, options.merge(filter: filter)).execute
     end
   end
 end

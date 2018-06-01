@@ -5,7 +5,7 @@ module Sonic
     autoload :IdentifierDetector, 'sonic/ssh/identifier_detector'
     autoload :CliOptions, 'sonic/ssh/cli_options'
 
-    include AwsServices
+    include AwsService
     include CliOptions
 
     def initialize(identifier, options)
@@ -14,11 +14,12 @@ module Sonic
       @user, @identifier = extract_user!(identifier) # extracts/strips user from identifier
       # While --user option is supported at the class level, don't expose at the CLI level
       # to encourage users to use user@host notation.
-      @user ||= options[:user] || settings.data["user"]
+      @user ||= options[:user] || settings["bastion"]["user"]
 
       @service = @identifier # always set service even though it's not always used as the identifier
-      @cluster = options[:cluster] || settings.default_cluster(@service)
-      @bastion = options[:bastion] || settings.default_bastion(@bastion)
+      map = settings["ecs_service_cluster_map"]
+      @cluster = options[:cluster] || map[@service] || map["default"] || "default"
+      @bastion = options[:bastion] || settings["bastion"]["host"]
     end
 
     def run
@@ -47,28 +48,34 @@ module Sonic
     def build_ssh_host
       return @identifier if ENV['TEST']
 
-      detector = Ssh::IdentifierDetector.new(@cluster, @service, @identifier, @options)
       instance_id = detector.detect!
       instance_hostname(instance_id)
     end
+
+    def detector
+      @detector ||= Ssh::IdentifierDetector.new(@cluster, @service, @identifier, @options)
+    end
+
 
     def instance_hostname(ec2_instance_id)
       begin
         resp = ec2.describe_instances(instance_ids: [ec2_instance_id])
       rescue Aws::EC2::Errors::InvalidInstanceIDNotFound => e
         # e.message: The instance ID 'i-027363802c6ff3141' does not exist
-        UI.error(e.message)
+        UI.error e.message
+        exit 1
+      rescue Aws::Errors::NoSuchEndpointError, SocketError
+        UI.error "It doesnt look like you have an internet connection. Please double check that you have an internet connection."
         exit 1
       end
       instance = resp.reservations[0].instances[0]
       # struct Aws::EC2::Types::Instance
       # http://docs.aws.amazon.com/sdkforruby/api/Aws/EC2/Types/Instance.html
-      host = if @bastion
-              instance.private_ip_address
-            else
-              instance.public_ip_address
-            end
-      "#{@user}@#{host}"
+      if @bastion
+        instance.private_ip_address
+      else
+        instance.public_ip_address
+      end
     end
 
     # Will use Kernel.exec so that the ssh process takes over this ruby process.
@@ -82,16 +89,28 @@ module Sonic
     end
 
 private
+    # direct access to settings data
     def settings
-      @settings ||= Settings.new(@options[:project_root])
+      @settings ||= Setting.new.data
     end
 
     # Returns Array of flags.
     # Example:
     #   ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null"]
     def ssh_options
-      host_key_check_options = settings.host_key_check_options
       keys_option + host_key_check_options
+    end
+
+    # By default bypass strict host key checking for convenience.
+    # But user can overrride this.
+    def host_key_check_options
+      if settings["bastion"]["host_key_check"] == true
+        []
+      else
+        # settings["bastion"]["host_key_check"] nil will disable checking also
+        # disables host key checking
+        %w[-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null]
+      end
     end
 
     # Will prepend the bastion host if required
@@ -111,12 +130,14 @@ private
     # -A = Enables forwarding of the authentication agent connection
     # -t = Force pseudo-terminal allocati
     def build_ssh_command
-      ssh = ["ssh"] + ssh_options
-      ssh += ["-At", bastion_host, "ssh"] + ssh_options if @bastion
-      # ssh_host is internal ip when bastion is set
-      # ssh_host is public ip when bastion is not set
-      ssh += ["-At", ssh_host]
-      ssh
+      command = ["ssh", "-t"] + ssh_options
+      if @bastion
+        # https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts
+        # -J xxx is -o ProxyJump=xxx
+        proxy_jump = ["-J", bastion_host]
+        command += proxy_jump
+      end
+      command += ["-t", "#{@user}@#{ssh_host}"]
     end
 
     # Private: Extracts and strips the user from the identifier.

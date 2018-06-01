@@ -3,10 +3,10 @@
 .bundle
 .config
 .yardoc
-InstalledFiles
 _yardoc
 coverage
 doc/
+InstalledFiles
 lib/bundler/man
 pkg
 rdoc

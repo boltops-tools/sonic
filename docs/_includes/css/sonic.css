@@ -28,7 +28,7 @@ section#main .intro-text .name {
     display: block;
     text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 2em;
+    font-size: 1.5em;
     font-weight: 700;
 }
 
@@ -58,22 +58,23 @@ section#main .intro-text .skills {
 
 .content-body {
     text-align: left;
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .content-body h2 {
-    text-align: center;
+    text-align: left;
 }
 
 .content-body ul,
 .content-body ol {
     margin-top: 0;
+    font-size: 17px;
 }
 
 .content-nav {
     /*background-color: green;*/
     margin-top: 40px;
-    font-size: 1.25em;
+    font-size: 1.15em;
 }
 
 .content-nav ul, .content-nav ol {
@@ -95,6 +96,7 @@ section#main .intro-text .skills {
 code {
     color: #443e40;
     background-color: #cdcbd4;
+    font-size: 0.72em;
 }
 
 footer h3 {
@@ -140,7 +142,7 @@ ul.tools li {
 .edit-on-github h2,
 .edit-on-github p,
 .edit-on-github li {
-    font-size: 1.5em;
+    /*font-size: 1.5em;*/
 }
 
 .use-cases {

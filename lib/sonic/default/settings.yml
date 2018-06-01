@@ -1,16 +1,6 @@
-bastion: # cluster_host mapping
-  default: # default is nil - which means a bastion host wont be used
-  # Examples:
-  # prod: bastion.mydomain.com
-  # stag: ubuntu@bastion-stag.mydomain.com
-host_key_check: false
-service_cluster:
-  default: # defaults to nil
-  # Examples:
-  # hi-web-prod: prod
-  # hi-clock-prod: prod
-  # hi-worker-prod: prod
-  # hi-web-stag: stag
-  # hi-clock-stag: stag
-  # hi-worker-stag: stag
-user: ec2-user
+bastion:
+  host_key_check: false
+  user: ec2-user
+
+ecs_service_cluster_map:
+  default: default

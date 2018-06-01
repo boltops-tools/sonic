@@ -9,11 +9,13 @@ body {
 }
 
 p {
-    font-size: 20px;
+    /*font-size: 20px;*/
+    font-size: 1.2em;
 }
 
 p.small {
-    font-size: 16px;
+    font-size: 1em;
+    /*font-size: 16px;*/
 }
 
 a,
@@ -31,16 +33,21 @@ h3,
 h4,
 h5,
 h6 {
-    text-transform: uppercase;
     font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight: 700;
 }
 
-h3,
-h4,
-h5,
-h6 {
-    text-transform: none;
+h1 {
+    font-size: 1.6em;
+}
+h2 {
+    font-size: 1.5em;
+}
+h3 {
+    font-size: 1.4em;
+}
+h4 {
+    font-size: 1.3em;
 }
 
 hr.star-light,
@@ -201,7 +208,6 @@ section {
 section h2 {
     margin: 0;
     margin-bottom: 15px;
-    font-size: 2em;
 }
 
 section.success {

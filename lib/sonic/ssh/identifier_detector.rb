@@ -4,7 +4,7 @@ class Ssh
   class IdentifierDetector
 
     include Ec2Tag
-    include AwsServices
+    include AwsService
     include Checks
 
     def initialize(cluster, service, identifier, options)
@@ -17,7 +17,7 @@ class Ssh
     # Returns exactly 1 instance_id or exits the program.
     # The bang check_* methods can exit early.
     def detect!
-      instance_id = case detected_type
+      @instance_id ||= case detected_type
         when :ecs_container_instance_or_task_arn
           check_cluster_exists! unless @options[:noop]
 
@@ -34,6 +34,10 @@ class Ssh
         when :ec2_instance
           @identifier
         end
+    end
+
+    def instance_id
+      detect!
     end
 
     # Any of these methods either returns exactly 1 instance_id or exit the program.
