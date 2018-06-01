@@ -49,6 +49,7 @@ module Sonic
       UI.say "Command sent to AWS SSM. To check the details of the command:"
       display_ssm_commands(command_id, ssm_options)
       puts
+      return if @options[:noop]
       wait(command_id)
       display_ssm_output(command_id, ssm_options)
       display_console_url(command_id)

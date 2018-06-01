@@ -1,6 +1,7 @@
 ENV["TEST"] = "1"
 # Ensures aws api never called. Fixture home folder does not contain ~/.aws/credentails
-ENV['HOME'] = "spec/fixtures/home"
+ENV["HOME"] = "spec/fixtures/home"
+ENV["SONIC_ROOT"] = "spec/fixtures/project"
 
 # CodeClimate test coverage: https://docs.codeclimate.com/docs/configuring-test-coverage
 # require 'simplecov'

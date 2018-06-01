@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Sonic::Execute do
   before(:each) do
     @options = {
-      project_root: "spec/fixtures/project",
       filter: "i-066b140d9479e9681,i-09482b1a6e330fbf7"
     }
   end
