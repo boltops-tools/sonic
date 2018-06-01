@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 This project *tries* to adhere to [Semantic Versioning](http://semver.org/), even before v1.0.
 
+## [2.0.0]
+- Merge pull request #5 from boltopslabs/cli-template-upgrade
+- improve css for docs site
+- add CLI reference docs
+- use JumpProxy option for bastion
+- change the way settings work, usage of SONIC_PROFILE and AWS_PROFILE and separate files
+- Big restructuring of sonic commands:
+- sonic ecs exec
+- sonic ecs run
+- sonic execute # much improved and added conveniences
+
 ## [1.4.0]
 - only use required aws-sdk modules
 - update gemspec homepage
