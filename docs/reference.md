@@ -3,7 +3,6 @@ title: CLI Reference
 ---
 {% include reference.md %}
 
-* [sonic command]({% link _reference/sonic-command.md %})
 * [sonic completion]({% link _reference/sonic-completion.md %})
 * [sonic completion_script]({% link _reference/sonic-completion_script.md %})
 * [sonic ecs]({% link _reference/sonic-ecs.md %})

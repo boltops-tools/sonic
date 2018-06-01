@@ -25,9 +25,7 @@ You should see something like this:
 ```sh
 $ sonic ecs exec hi-web --cluster staging
 Running: scp -r /tmp/sonic ec2-user@34.211.195.71:/tmp/sonic  > /dev/null
-Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 => ssh -t ec2-user@34.211.195.71 bash /tmp/sonic/bash_scripts/docker-exec.sh
-Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 root@fc4035f90bdc:/app#
 ```
 
@@ -61,14 +59,14 @@ sonic ecs exec 9f1dadc7-4f67-41da-abec-ec08810bfbc9 bash
 sonic ecs exec i-006a097bb10643e20 bash
 ```
 
-### Settings - service_cluster mapping
+### Settings - ecs_service_cluster_map
 
 As mentioned in the [previous section]({% link _docs/tutorial-ssh.md %}) and also in the [Settings documentation]({% link _docs/settings.md %}) you can configure a `~/.sonic/settings.yml` file which shortens the command further.  Let's add this to your settings:
 
 ```yaml
-service_cluster:
-  default: stag
-  hi-web: stag
+ecs_service_cluster_map:
+  default: staging
+  hi-web: staging
 ```
 
 This makes the command consise and memorable.
@@ -79,14 +77,12 @@ sonic ecs exec hi-web
 
 The rest of this section assumes that you have the `~/.sonic/settings.yml` set up.
 
-You can also tack on a command at the end of the `ecs-exec` command to be run as a one off instead of starting a bash shell. Example:
+You can also tack on a command at the end of the `ecs exec` command to be run as a one off instead of starting a bash shell. Example:
 
 ```
 $ sonic ecs exec hi-web uname -a
 Running: scp -r /tmp/sonic ec2-user@34.211.195.71:/tmp/sonic  > /dev/null
-Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 => ssh -t ec2-user@34.211.195.71 bash /tmp/sonic/bash_scripts/docker-exec.sh uname -a
-Warning: Permanently added '34.211.195.71' (ECDSA) to the list of known hosts.
 Linux fc4035f90bdc 4.4.51-40.58.amzn1.x86_64 #1 SMP Tue Feb 28 21:57:17 UTC 2017 x86_64 GNU/Linux
 Connection to 34.211.195.71 closed.
 $
@@ -95,5 +91,5 @@ $
 Remember the command runs within the running docker container.
 
 <a id="prev" class="btn btn-basic" href="{% link _docs/tutorial-ssh.md %}">Back</a>
-<a id="next" class="btn btn-primary" href="{% link _docs/tutorial-ecs-run.md %}">Next Step</a>
+<a id="next" class="btn btn-primary" href="{% link _docs/tutorial-ecs-sh.md %}">Next Step</a>
 <p class="keyboard-tip">Pro tip: Use the <- and -> arrow keys to move back and forward.</p>

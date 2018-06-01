@@ -13,7 +13,7 @@ module Sonic
     class_option :verbose, type: :boolean
     class_option :noop, type: :boolean
 
-    desc "ssh [IDENTIFER]", "ssh into a instance using identifier. identifer can be several things: instance id, ec2 tag, ECS service name, etc"
+    desc "ssh [IDENTIFER]", "Ssh into a instance using identifier. identifer can be several things: instance id, ec2 tag, ECS service name, etc."
     long_desc Help.text(:ssh)
     option :keys, :aliases => '-i', :desc => "comma separated list of ssh private key paths"
     option :retry, :aliases => '-r', :type => :boolean, :desc => "keep retrying the server login until successful. Useful when on newly launched instances."
@@ -23,7 +23,7 @@ module Sonic
       Ssh.new(identifier, options.merge(command: command)).run
     end
 
-    desc "execute [FILTER] [COMMAND]", "runs command across fleet of servers via AWS Run Command"
+    desc "execute [FILTER] [COMMAND]", "Runs command across fleet of servers via AWS Run Command."
     long_desc Help.text("execute")
     option :zero_warn, type: :boolean, default: true, desc: "Warns user when no instances found"
     # filter - Filter ec2 instances by tag name or instance_ids separated by commas
@@ -31,7 +31,7 @@ module Sonic
       Execute.new(command, options.merge(filter: filter)).execute
     end
 
-    desc "list [FILTER]", "lists ec2 instances"
+    desc "list [FILTER]", "Lists ec2 instances."
     long_desc Help.text(:list)
     option :header, type: :boolean, desc: "Displays header"
     # filter - Filter ec2 instances by tag name or instance_ids separated by commas

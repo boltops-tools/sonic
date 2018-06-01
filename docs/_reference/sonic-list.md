@@ -9,7 +9,7 @@ reference: true
 
 ## Description
 
-lists ec2 instances
+Lists ec2 instances.
 
 List ec2 servers. A filter must be provided.  The filter can be a mix of instance ids and ec2 tags. sonic list will auto-detect the what type of filter it is filter appropriately.  The filter for listing is optional.
 

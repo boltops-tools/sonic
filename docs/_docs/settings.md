@@ -2,10 +2,10 @@
 title: Settings
 ---
 
-You can adjust the behavior of sonic and set some handy default values with settings files.  The settings files used are determined by the value of environment variable `SONIC_PROFILE` or `AWS_PROFILE`. The value determines the settings profile to to use.  There can exist multiple settings files which all get loaded and merged. The options from the files follow the following precedence rules:
+You can adjust the behavior of sonic and set some handy default values with settings files.  The settings files used are determined by the value of environment variable `SONIC_PROFILE` or `AWS_PROFILE`. The value determines the settings profile to use.  There can exist multiple settings files which all get loaded and merged. The options from the files follow the following precedence rules:
 
-1. current folder - The current folder's `.sonic/[PROFILE].yml` values take the highest precedence. The current folder is typically the project folder.
-2. user - The user's `~/.sonic/[PROFILE].yml` values take the second highest precedence.
+1. current folder - The current folder's `.sonic/[AWS_PROFILE].yml` values take the highest precedence. The current folder is typically the project folder.
+2. user - The user's `~/.sonic/[AWS_PROFILE].yml` values take the second highest precedence.
 3. default - The [default settings](https://github.com/boltopslabs/sonic/blob/master/lib/sonic/default/settings.yml) bundled with the tool takes the lowest precedence.
 
 A concrete example helps explain it. Let's say `AWS_PROFILE=prod-profile` with the following files:
