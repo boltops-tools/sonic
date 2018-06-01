@@ -6,9 +6,9 @@ module Sonic
     long_desc Help.text(:ecs)
     subcommand "ecs", Ecs
 
-    desc "command SUBCOMMAND", "command subcommands"
-    long_desc Help.text(:command)
-    subcommand "command", Command
+    # desc "command SUBCOMMAND", "command subcommands"
+    # long_desc Help.text(:command)
+    # subcommand "command", Command
 
     class_option :verbose, type: :boolean
     class_option :noop, type: :boolean
