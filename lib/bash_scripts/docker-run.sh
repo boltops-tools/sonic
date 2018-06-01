@@ -12,4 +12,11 @@ CONTAINER_IMAGE=$(cat /tmp/sonic/docker-image.txt)
 cp /tmp/sonic/env-file.txt ~/
 rm -rf /tmp/sonic
 
-exec docker run -ti --env-file ~/env-file.txt $CONTAINER_IMAGE "$@"
+if [ $# -eq 0 ]; then
+  COMMAND=bash
+else
+  COMMAND=$@
+fi
+
+set -x
+exec docker run -ti --env-file ~/env-file.txt "$CONTAINER_IMAGE" $COMMAND

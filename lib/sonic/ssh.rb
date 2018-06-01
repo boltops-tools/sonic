@@ -17,7 +17,8 @@ module Sonic
       @user ||= options[:user] || settings["bastion"]["user"]
 
       @service = @identifier # always set service even though it's not always used as the identifier
-      @cluster = options[:cluster] || settings["ecs_service_cluster_map"][@service] || "default"
+      map = settings["ecs_service_cluster_map"]
+      @cluster = options[:cluster] || map[@service] || map["default"] || "default"
       @bastion = options[:bastion] || settings["bastion"]["host"]
     end
 
@@ -47,10 +48,14 @@ module Sonic
     def build_ssh_host
       return @identifier if ENV['TEST']
 
-      detector = Ssh::IdentifierDetector.new(@cluster, @service, @identifier, @options)
       instance_id = detector.detect!
       instance_hostname(instance_id)
     end
+
+    def detector
+      @detector ||= Ssh::IdentifierDetector.new(@cluster, @service, @identifier, @options)
+    end
+
 
     def instance_hostname(ec2_instance_id)
       begin

@@ -19,6 +19,7 @@ module Sonic
 
     def setup
       validate!
+      confirm_ssh_access
       copy_over_container_data
     end
 
@@ -46,10 +47,37 @@ module Sonic
       kernel_exec(*args)
     end
 
+    def build_host
+      host = @bastion ? bastion_host : ssh_host
+      host = "#{@user}@#{host}" unless host.include?('@')
+      host
+    end
+
+    def confirm_ssh_access
+      host = build_host
+      puts "Checking access to instance #{detector.instance_id}"
+
+      ssh = ["ssh", ssh_options, "-At", host, "uptime", "2>&1"]
+      command = ssh.join(' ')
+      puts "=> #{command}".colorize(:green)
+      output = `#{command}`
+      if output.include?("Permission denied")
+        puts output
+        UI.error("Access to the instance denied. Maybe check your ssh keys.")
+        exit 1
+      elsif output.include?(" up ")
+        puts "Access OK!"
+      else
+        puts output
+        UI.error("There was an error trying to access the instnace.")
+        exit 1
+      end
+    end
+
     def copy_over_container_data
       create_container_data
 
-      host = @bastion ? bastion_host : ssh_host
+      host = build_host
 
       # LEVEL 1
       # Always clean up remote /tmp/sonic in case of previous interrupted run.

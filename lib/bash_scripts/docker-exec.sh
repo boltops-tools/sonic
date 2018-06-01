@@ -12,4 +12,5 @@ else
   COMMAND=bash
 fi
 
+set -x
 exec docker exec -ti $CONTAINER_ID $COMMAND
