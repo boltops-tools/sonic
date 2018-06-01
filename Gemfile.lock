@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sonic-screwdriver (1.4.0)
+    sonic-screwdriver (2.0.0)
       activesupport
       aws-sdk-ec2
       aws-sdk-ecs
@@ -46,6 +46,7 @@ GEM
       aws-sigv4 (~> 1.0)
     aws-sigv4 (1.0.2)
     byebug (10.0.2)
+    cli_markdown (0.1.0)
     codeclimate-test-reporter (1.0.8)
       simplecov (<= 0.13)
     coderay (1.1.2)
@@ -150,6 +151,7 @@ PLATFORMS
 DEPENDENCIES
   bundler
   byebug
+  cli_markdown
   codeclimate-test-reporter
   guard
   guard-bundler
