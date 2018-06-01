@@ -23,9 +23,11 @@ Here is an `prod-profile.yml` example:
 
 ```yaml
 bastion: # cluster_host mapping
-  user: ec2-user
   host: # default is nil - which means a bastion host wont be used
   host_key_check: false
+
+ssh:
+  user: ec2-user
 
 # used with `sonic ecs ssh` command
 ecs_service_cluster_map:
@@ -39,10 +41,10 @@ The following table covers the different setting options:
 
 Setting  | Description | Default
 ------------- | ------------- | -------------
-bastion.user  | User to ssh into the server with. This can be overriden at the CLI with the user@host notation but can be set in the settings.yml file also. | ec2-user
 bastion.host  | Bastion mapping allows you to set a bastion host on a per ECS cluster basis.  The bastion host is used as the jump host. Examples: bastion.mydomain.com, myuser@bastion.myuser.com or 123.123.123.123. | (no value)
 bastion.host_key_check  | Controls whether or not use the strict host checking ssh option.  Since EC2 server host changes often the default value is false. | false
 ecs_service_cluster_map  | Service to cluster mapping.  This is a Hash structure that maps the service name to cluster names. | (no value)
+ssh.user  | User to ssh into the server with. This can be overriden at the CLI with the user@host notation but can be set in the settings.yml file also. | ec2-user
 
 The default settings are located tool source code at [lib/sonic/default/settings.yml](https://github.com/boltopslabs/sonic/blob/master/lib/sonic/default/settings.yml).
 

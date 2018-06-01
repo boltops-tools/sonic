@@ -39,7 +39,8 @@ sonic ssh ubuntu@i-0f7f833131a51ce35
 The default user can also be configured with a `~/.sonic/settings.yml` or the project's `.sonic/settings.yml` file like so:
 
 ```yaml
-user: ec2-user
+ssh:
+  user: ec2-user
 ```
 
 More information about sonic settings in available in the docs: [Settings]({% link _docs/settings.md %}).
