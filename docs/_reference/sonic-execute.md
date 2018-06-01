@@ -11,7 +11,8 @@ reference: true
 
 Runs command across fleet of servers via AWS Run Command.
 
-Run as a command across a list of servers. A filter must be provided.  The filter can be a mix of instance ids and ec2 tags. This command can also take a path to a file. To specify a path to a file use file:// at the beginning of your file.
+* A filter must be provided.  The filter can be a mix of instance ids and ec2 tags.
+* The command can be provided inline or as a file. To a file use `file://` at the beginning of your file.
 
 ## Examples Summary
 
@@ -26,39 +27,37 @@ You cannot mix instance ids and tag names in the filter.
 
 Here's a command example output in detailed:
 
-```sh
-$ sonic execute i-0bf51a000ab4e73a8 uptime
-Sending command to SSM with options:
----
-instance_ids:
-- i-0bf51a000ab4e73a8
-document_name: AWS-RunShellScript
-comment: sonic execute i-0bf51a000ab4e73a8 uptime
-parameters:
-    commands:
-  - uptime
-output_s3_region: us-east-1
-output_s3_bucket_name: [reacted]
-output_s3_key_prefix: ssm/commands/sonic
+    $ sonic execute i-0bf51a000ab4e73a8 uptime
+    Sending command to SSM with options:
+    ---
+    instance_ids:
+    - i-0bf51a000ab4e73a8
+    document_name: AWS-RunShellScript
+    comment: sonic execute i-0bf51a000ab4e73a8 uptime
+    parameters:
+      commands:
+      - uptime
+    output_s3_region: us-east-1
+    output_s3_bucket_name: [reacted]
+    output_s3_key_prefix: ssm/commands/sonic
 
-Command sent to AWS SSM. To check the details of the command:
-    aws ssm list-commands --command-id 0bb18d58-6436-49fd-9bfd-0c4b6c51c7a2
-    aws ssm get-command-invocation --command-id 0bb18d58-6436-49fd-9bfd-0c4b6c51c7a2 --instance-id i-0bf51a000ab4e73a8
+    Command sent to AWS SSM. To check the details of the command:
+      aws ssm list-commands --command-id 0bb18d58-6436-49fd-9bfd-0c4b6c51c7a2
+      aws ssm get-command-invocation --command-id 0bb18d58-6436-49fd-9bfd-0c4b6c51c7a2 --instance-id i-0bf51a000ab4e73a8
 
-Waiting for ssm command to finish.....
-Command finished.
+    Waiting for ssm command to finish.....
+    Command finished.
 
-Displaying output for i-0bf51a000ab4e73a8.
-Command status: Success
-Command standard output:
- 01:08:10 up 8 days,  6:41,  0 users,  load average: 0.00, 0.00, 0.00
+    Displaying output for i-0bf51a000ab4e73a8.
+    Command status: Success
+    Command standard output:
+     01:08:10 up 8 days,  6:41,  0 users,  load average: 0.00, 0.00, 0.00
 
-To see the more output details visit:
-    https://us-west-2.console.aws.amazon.com/systems-manager/run-command/0bb18d58-6436-49fd-9bfd-0c4b6c51c7a2
+    To see the more output details visit:
+      https://us-west-2.console.aws.amazon.com/systems-manager/run-command/0bb18d58-6436-49fd-9bfd-0c4b6c51c7a2
 
-Pro tip: the console url is already in your copy/paste clipboard.
-$
-```
+    Pro tip: the console url is already in your copy/paste clipboard.
+    $
 
 Notice the conveniences of `sonic execute`, it:
 

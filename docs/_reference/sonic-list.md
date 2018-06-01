@@ -11,16 +11,16 @@ reference: true
 
 Lists ec2 instances.
 
-List ec2 servers. A filter must be provided.  The filter can be a mix of instance ids and ec2 tags. sonic list will auto-detect the what type of filter it is filter appropriately.  The filter for listing is optional.
+A filter must be provided.  The filter can be a mix of instance ids and ec2 tags. sonic list will auto-detect the what type of filter it is.  The filter is optional.
 
-Examples:
+## Examples
 
     $ sonic list
     $ sonic list hi-web-prod
     $ sonic list hi-web-prod,hi-clock-prod
     $ sonic list i-09482b1a6e330fbf7
 
-Example Output:
+## Example Output
 
     $ sonic list --header i-09482b1a6e330fbf7
     Instance Id Public IP Private IP  Type
