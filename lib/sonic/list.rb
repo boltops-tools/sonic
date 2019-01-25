@@ -35,7 +35,7 @@ module Sonic
 
       if @options[:header] && !zero_instances
         header = ["Instance Id", "Name", "Public IP", "Private IP", "Type"]
-        UI.say header.join("\t").colorize(:green)
+        UI.say header.join("\t").color(:green)
       end
 
       instances.each do |i|

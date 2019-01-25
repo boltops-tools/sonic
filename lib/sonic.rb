@@ -1,6 +1,6 @@
 $:.unshift(File.expand_path("../", __FILE__))
+require "rainbow/ext/string"
 require "sonic/version"
-require "colorize"
 
 module Sonic
   autoload :Core, 'sonic/core'

@@ -30,7 +30,7 @@ module Sonic
 
     # command is an Array
     def execute(*command)
-      UI.say "=> #{command.join(' ')}".colorize(:green)
+      UI.say "=> #{command.join(' ')}".color(:green)
       success = system(*command)
       unless success
         UI.error(command.join(' '))
@@ -59,7 +59,7 @@ module Sonic
 
       ssh = ["ssh", ssh_options, "-At", host, "uptime", "2>&1"]
       command = ssh.join(' ')
-      puts "=> #{command}".colorize(:green)
+      puts "=> #{command}".color(:green)
       output = `#{command}`
       if output.include?("Permission denied")
         puts output

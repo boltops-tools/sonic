@@ -1,5 +1,3 @@
-require 'colorize'
-
 module Sonic
   class Ssh
     autoload :IdentifierDetector, 'sonic/ssh/identifier_detector'
@@ -82,7 +80,7 @@ module Sonic
     def kernel_exec(*args)
       # append the optional command that can be provided to the ssh command
       full_command = args + @options[:command]
-      puts "=> #{full_command.join(' ')}".colorize(:green)
+      puts "=> #{full_command.join(' ')}".color(:green)
       # https://ruby-doc.org/core-2.3.1/Kernel.html#method-i-exec
       # Using 2nd form
       Kernel.exec(*full_command) unless @options[:noop]

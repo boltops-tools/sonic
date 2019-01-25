@@ -19,10 +19,10 @@ module Sonic
         puts msg unless mute
       end
       def error(msg='')
-        say "ERROR: #{msg}".colorize(:red)
+        say "ERROR: #{msg}".color(:red)
       end
       def warn(msg='')
-        say "WARN: #{msg}".colorize(:yellow)
+        say "WARN: #{msg}".color(:yellow)
       end
     end
   end

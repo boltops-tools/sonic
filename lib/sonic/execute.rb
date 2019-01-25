@@ -1,4 +1,3 @@
-require 'colorize'
 require 'yaml'
 require 'active_support/core_ext/hash'
 
@@ -104,9 +103,9 @@ module Sonic
     def colorized_status(status)
       case status
       when "Success"
-        status.colorize(:green)
+        status.color(:green)
       when "Failed"
-        status.colorize(:red)
+        status.color(:red)
       else
         status
       end
