@@ -73,7 +73,7 @@ class Ssh
 
       task = response.tasks.first
       unless task
-        puts "Unable to find a #{task_arn.green} container instance or task in the #{@cluster.green} cluster."
+        puts "Unable to find a #{task_arn.color(:green)} container instance or task in the #{@cluster.color(:green)} cluster."
         exit 1
       end
 

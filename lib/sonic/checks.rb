@@ -3,7 +3,7 @@ module Sonic
     def check_cluster_exists!
       cluster = ecs.describe_clusters(clusters: [@cluster]).clusters.first
       unless cluster
-        UI.error "The #{@cluster.green} cluster does not exist.  Are you sure you specified the right cluster?"
+        UI.error "The #{@cluster.color(:green)} cluster does not exist.  Are you sure you specified the right cluster?"
         exit 1
       end
     end
@@ -20,7 +20,7 @@ module Sonic
 
       service = resp.services.first
       unless service
-        UI.error "The #{@service.green} service does not exist in #{@cluster.green} cluster.  Are you sure you specified the right service and cluster?"
+        UI.error "The #{@service.color(:green)} service does not exist in #{@cluster.color(:green)} cluster.  Are you sure you specified the right service and cluster?"
         exit 1
       end
     end
