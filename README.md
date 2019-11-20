@@ -4,6 +4,8 @@
 [![Gitter](https://badges.gitter.im/boltopslabs/sonic.svg)](https://gitter.im/boltopslabs/sonic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Support](https://img.shields.io/badge/get-support-blue.svg)](https://boltops.com?utm_source=badge&utm_medium=badge&utm_campaign=sonic)
 
+[![BoltOps Badge](https://img.boltops.com/boltops/badges/boltops-badge.png)](https://www.boltops.com)
+
 Sonic is a multi-functional tool that helps you manage AWS resources. Sonic contains a group of commands that help debug EC2 instances and ECS containers quickly.
 
 See [sonic-screwdriver.cloud](http://sonic-screwdriver.cloud) for full documentation.
