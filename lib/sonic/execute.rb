@@ -54,6 +54,7 @@ module Sonic
       display_console_url(command_id)
 
       if status == "Success"
+        puts "Command successful: #{status}".color(:green)
         exit(0)
       else
         puts "Command unsuccessful: #{status}".color(:red)
@@ -177,7 +178,13 @@ module Sonic
       options = criteria.merge(
         document_name: "AWS-RunShellScript", # default
         comment: "sonic #{ARGV.join(' ')}"[0..99], # comment has a max of 100 chars
-        parameters: { "commands" => command }
+        parameters: { "commands" => command },
+        # Default CloudWatchLog settings. Can be overwritten with settings.yml send_command
+        # IMPORTANT: make sure the EC2 instance the command runs on has access to write to CloudWatch Logs.
+        cloud_watch_output_config: {
+          cloud_watch_log_group_name: "ssm",
+          cloud_watch_output_enabled: true,
+        },
       )
       settings_options = settings["send_command"] || {}
       options.merge(settings_options.deep_symbolize_keys)
