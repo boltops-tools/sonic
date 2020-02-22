@@ -33,6 +33,7 @@ module Sonic
         puts
         begin
           resp = send_command(ssm_options)
+
           command_id = resp.command.command_id
           success = true
         rescue Aws::SSM::Errors::InvalidInstanceId => e
@@ -50,7 +51,7 @@ module Sonic
       puts
       return if @options[:noop]
       status = wait(command_id)
-      display_ssm_output(command_id, ssm_options)
+      display_ssm_output(command_id)
       display_console_url(command_id)
 
       if status == "Success"
@@ -79,13 +80,12 @@ module Sonic
       status
     end
 
-    def display_ssm_output(command_id, ssm_options)
-      instance_ids = ssm_options[:instance_ids]
-      return unless instance_ids && instance_ids.size > 0
-
-      instance_id = instance_ids.first
-      if ssm_options[:instance_ids].size > 1
-        puts "Multiple instance targets. Only displaying output for #{instance_id}."
+    def display_ssm_output(command_id)
+      resp = ssm.list_command_invocations(command_id: command_id)
+      command_invocations = resp.command_invocations
+      instance_id = command_invocations.first.instance_id
+      if command_invocations.size > 1
+        puts "Multiple instance targets. Total targets: #{command_invocations.size}. Only displaying output for #{instance_id}."
       else
         puts "Displaying output for #{instance_id}."
       end
@@ -181,7 +181,7 @@ module Sonic
         # Default CloudWatchLog settings. Can be overwritten with settings.yml send_command
         # IMPORTANT: make sure the EC2 instance the command runs on has access to write to CloudWatch Logs.
         cloud_watch_output_config: {
-          cloud_watch_log_group_name: "ssm",
+          # cloud_watch_log_group_name: "ssm", # Defaults to /aws/ssm/AWS-RunShellScript (aws/ssm/SystemsManagerDocumentName https://amzn.to/38TKVse)
           cloud_watch_output_enabled: true,
         },
       )
