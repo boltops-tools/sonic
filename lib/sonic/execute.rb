@@ -49,9 +49,16 @@ module Sonic
       display_ssm_commands(command_id, ssm_options)
       puts
       return if @options[:noop]
-      wait(command_id)
+      status = wait(command_id)
       display_ssm_output(command_id, ssm_options)
       display_console_url(command_id)
+
+      if status == "Success"
+        exit(0)
+      else
+        puts "Command unsuccessful: #{status}".color(:red)
+        exit(1)
+      end
     end
 
     def wait(command_id)
@@ -68,6 +75,7 @@ module Sonic
       end
       puts "\nCommand finished."
       puts
+      status
     end
 
     def display_ssm_output(command_id, ssm_options)
@@ -96,8 +104,7 @@ module Sonic
       puts "To see the more output details visit:"
       puts "  #{console_url}"
       puts
-      copy_paste_clipboard(console_url)
-      UI.say "Pro tip: the console url is already in your copy/paste clipboard."
+      copy_paste_clipboard(console_url, "Pro tip: the console url is already in your copy/paste clipboard.")
     end
 
     def colorized_status(status)
@@ -253,8 +260,7 @@ You can use the following command to check registered instances to SSM.
 #{ssm_describe_command}
       EOS
       UI.warn(message)
-      copy_paste_clipboard(ssm_describe_command)
-      UI.say "Pro tip: ssm describe-instance-information already in your copy/paste clipboard."
+      copy_paste_clipboard(ssm_describe_command, "Pro tip: ssm describe-instance-information already in your copy/paste clipboard.")
     end
 
     def file_path?(command)
@@ -311,9 +317,10 @@ EOL
       end
     end
 
-    def copy_paste_clipboard(command)
+    def copy_paste_clipboard(command, text)
       return unless RUBY_PLATFORM =~ /darwin/
       system("echo '#{command}' | pbcopy")
+      UI.say text
     end
   end
 end
