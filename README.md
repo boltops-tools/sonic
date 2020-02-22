@@ -34,15 +34,7 @@ By the time I get into the container, I need to remind my brain of what the orig
 
 You can install sonic with RubyGems
 
-```sh
-gem install sonic
-```
-
-If you want to quickly install sonic without having to worry about sonic's dependencies you can also install the Bolts Toolbelt which has sonic included.
-
-```sh
-brew cask install boltopslabs/software/bolts
-```
+    gem install sonic
 
 Full installation instructions are at [Install Sonic Screwdriver](http://sonic-screwdriver.cloud/docs/install/).  There are some server side dependencies for some of the sonic commands, so it is important to read through the full installation guide.
 
@@ -50,30 +42,28 @@ Full installation instructions are at [Install Sonic Screwdriver](http://sonic-s
 
 Here is a quick overview of sonic abilities:
 
-```sh
-# ssh into an instance
-sonic ssh i-0f7f833131a51ce35
-sonic ssh hi-web # ec2 tag
-sonic ssh hi-web --cluster staging # ecs service name
-sonic ssh hi-web --cluster staging # ecs service name
-sonic ssh 7fbc8c75-4675-4d39-a5a4-0395ff8cd474 --cluster staging # ECS container id
-sonic ssh 1ed12abd-645c-4a05-9acf-739b9d790170 --cluster staging # ECS task id
+    # ssh into an instance
+    sonic ssh i-0f7f833131a51ce35
+    sonic ssh hi-web # ec2 tag
+    sonic ssh hi-web --cluster staging # ecs service name
+    sonic ssh hi-web --cluster staging # ecs service name
+    sonic ssh 7fbc8c75-4675-4d39-a5a4-0395ff8cd474 --cluster staging # ECS container id
+    sonic ssh 1ed12abd-645c-4a05-9acf-739b9d790170 --cluster staging # ECS task id
 
-# docker exec to a running ECS docker container
-sonic ecs exec hi-web
+    # docker exec to a running ECS docker container
+    sonic ecs exec hi-web
 
-# docker run with the same environment as the ECS docker running containers
-sonic ecs sh hi-web
+    # docker run with the same environment as the ECS docker running containers
+    sonic ecs sh hi-web
 
-# run command on 1 instance
-sonic execute i-0f7f833131a51ce35 uptime
+    # run command on 1 instance
+    sonic execute i-0f7f833131a51ce35 uptime
 
-# run command on all instances tagged with hi-web and worker
-sonic execute hi-web,hi-worker uptime
+    # run command on all instances tagged with hi-web and worker
+    sonic execute hi-web,hi-worker uptime
 
-# list ec2 instances
-sonic list hi-web
-```
+    # list ec2 instances
+    sonic list hi-web
 
 ## Contributing
 

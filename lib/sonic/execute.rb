@@ -154,7 +154,6 @@ module Sonic
 
       begin
         resp = ssm.send_command(options)
-        # puts "NOOP FOR NOW"
       rescue Aws::SSM::Errors::UnsupportedPlatformType
         retries += 1
         # toggle AWS-RunShellScript / AWS-RunPowerShellScript
