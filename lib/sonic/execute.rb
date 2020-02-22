@@ -120,7 +120,7 @@ module Sonic
       return if content.empty?
 
       puts "Command standard #{type}:"
-      # "https://s3.amazonaws.com/lr-infrastructure-prod/ssm/commands/sonic/0a4f4bef-8f63-4235-8b30-ae296477261a/i-0b2e6e187a3f9ada9/awsrunPowerShellScript/0.awsrunPowerShellScript/stderr">
+      # "https://s3.amazonaws.com/infra-prod/ssm/commands/sonic/0a4f4bef-8f63-4235-8b30-ae296477261a/i-0b2e6e187a3f9ada9/awsrunPowerShellScript/0.awsrunPowerShellScript/stderr">
       if content.include?("--output truncated--") && !resp[s3_key].empty?
         s3_url = resp[s3_key]
         info = s3_url.sub('https://s3.amazonaws.com/', '').split('/')
