@@ -6,7 +6,6 @@ module Sonic
     include AwsService
 
     def initialize(command, options)
-      puts "initialize command #{command.inspect}"
       @command = command
       @options = options
       @tags = @options[:tags]
