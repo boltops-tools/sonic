@@ -20,10 +20,6 @@ module Sonic
     #   --parameters '{"commands":["#!/usr/bin/python","print \"Hello world from python\""]}' \
     #   --query "Command.CommandId"
     def execute
-      puts "@tags #{@tags.inspect}"
-      puts "@instance_ids #{@instance_ids.inspect}"
-      puts "@command #{@command.inspect}"
-
       check_filter_options!
       ssm_options = build_ssm_options
       if @options[:noop]
