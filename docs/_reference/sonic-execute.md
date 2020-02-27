@@ -16,10 +16,10 @@ Runs command across fleet of servers via AWS Run Command.
 
 ## Examples Summary
 
-    $ sonic execute hi-web-prod uptime
-    $ sonic execute hi-web-prod,hi-worker-prod,hi-clock-prod uptime
-    $ sonic execute i-030033c20c54bf149,i-030033c20c54bf150 uname -a
-    $ sonic execute i-030033c20c54bf149 file://hello.sh
+    sonic execute --tags Name=demo-web uptime
+    sonic execute --tags Name=demo-web,demo-worker uptime # multiple values
+    sonic execute --instance-ids i-030033c20c54bf149,i-030033c20c54bf150 uname -a
+    sonic execute --instance-ids i-030033c20c54bf149 file://hello.sh # script from file
 
 You cannot mix instance ids and tag names in the filter.
 
@@ -27,13 +27,13 @@ You cannot mix instance ids and tag names in the filter.
 
 Here's a command example output in detailed:
 
-    $ sonic execute i-0bf51a000ab4e73a8 uptime
+    $ sonic execute --instance-ids i-0bf51a000ab4e73a8 uptime
     Sending command to SSM with options:
     ---
     instance_ids:
     - i-0bf51a000ab4e73a8
     document_name: AWS-RunShellScript
-    comment: sonic execute i-0bf51a000ab4e73a8 uptime
+    comment: sonic execute --instance-ids i-0bf51a000ab4e73a8 uptime
     parameters:
       commands:
       - uptime
@@ -77,6 +77,8 @@ The AWS SSM console looks like this:
 ```
 [--zero-warn], [--no-zero-warn]  # Warns user when no instances found
                                  # Default: true
+[--instance-ids=INSTANCE_IDS]    # Instance ids to execute command on. Format: --instance-ids "i-111,i-222"
+[--tags=TAGS]                    # Tags used to determine what instances to execute command on. Format: --tags "Key1=v1,v2;Key2=v3"
 [--verbose], [--no-verbose]      
 [--noop], [--no-noop]            
 ```

@@ -16,16 +16,6 @@ You can also add sonic to your Gemfile in your project if you are working with a
 gem "sonic-screwdriver"
 ```
 
-### Install with Bolts Toolbelt
-
-If you want to install sonic without having to worry about sonic's ruby dependency you can simply install the Bolts Toolbelt which has sonic included.
-
-```sh
-brew cask install boltopslabs/software/bolts
-```
-
-For more information about the Bolts Toolbelt or to get an installer for another operating system visit: [https://boltops.com/toolbelt](https://boltops.com/toolbelt)
-
 ### Server Side Dependencies
 
 For a small set of the commands there are server side dependencies.

@@ -8,7 +8,8 @@ module Sonic
     def initialize(command, options)
       @command = command
       @options = options
-      @filter = @options[:filter].split(',').map{|s| s.strip}
+      @tags = @options[:tags]
+      @instance_ids = @options[:instance_ids]
     end
 
     # aws ssm send-command \
@@ -18,6 +19,7 @@ module Sonic
     #   --parameters '{"commands":["#!/usr/bin/python","print \"Hello world from python\""]}' \
     #   --query "Command.CommandId"
     def execute
+      check_filter_options!
       ssm_options = build_ssm_options
       if @options[:noop]
         UI.noop = true
@@ -33,6 +35,7 @@ module Sonic
         puts
         begin
           resp = send_command(ssm_options)
+
           command_id = resp.command.command_id
           success = true
         rescue Aws::SSM::Errors::InvalidInstanceId => e
@@ -49,9 +52,17 @@ module Sonic
       display_ssm_commands(command_id, ssm_options)
       puts
       return if @options[:noop]
-      wait(command_id)
-      display_ssm_output(command_id, ssm_options)
+      status = wait(command_id)
+      instances_found = display_ssm_output(command_id)
       display_console_url(command_id)
+
+      if status == "Success"
+        puts "Command successful: #{status}".color(:green)
+        exit(0)
+      else
+        puts "Command unsuccessful: #{status}".color(:red)
+        exit(1)
+      end
     end
 
     def wait(command_id)
@@ -68,15 +79,21 @@ module Sonic
       end
       puts "\nCommand finished."
       puts
+      status
     end
 
-    def display_ssm_output(command_id, ssm_options)
-      instance_ids = ssm_options[:instance_ids]
-      return unless instance_ids && instance_ids.size > 0
+    def display_ssm_output(command_id)
+      resp = ssm.list_command_invocations(command_id: command_id)
+      command_invocations = resp.command_invocations
+      command_invocation = command_invocations.first
+      unless command_invocation
+        puts "WARN: No instances found that matches the --tags or --instance-ids option".color(:yellow)
+        return false # instances_found
+      end
+      instance_id = command_invocation.instance_id
 
-      instance_id = instance_ids.first
-      if ssm_options[:instance_ids].size > 1
-        puts "Multiple instance targets. Only displaying output for #{instance_id}."
+      if command_invocations.size > 1
+        puts "Multiple instance targets. Total targets: #{command_invocations.size}. Only displaying output for #{instance_id}."
       else
         puts "Displaying output for #{instance_id}."
       end
@@ -88,6 +105,7 @@ module Sonic
       ssm_output(resp, "output")
       ssm_output(resp, "error")
       puts
+      true # instances_found
     end
 
     def display_console_url(command_id)
@@ -96,8 +114,7 @@ module Sonic
       puts "To see the more output details visit:"
       puts "  #{console_url}"
       puts
-      copy_paste_clipboard(console_url)
-      UI.say "Pro tip: the console url is already in your copy/paste clipboard."
+      copy_paste_clipboard(console_url, "Pro tip: the console url is already in your copy/paste clipboard.")
     end
 
     def colorized_status(status)
@@ -146,7 +163,6 @@ module Sonic
 
       begin
         resp = ssm.send_command(options)
-        # puts "NOOP FOR NOW"
       rescue Aws::SSM::Errors::UnsupportedPlatformType
         retries += 1
         # toggle AWS-RunShellScript / AWS-RunPowerShellScript
@@ -165,12 +181,18 @@ module Sonic
     end
 
     def build_ssm_options
-      criteria = transform_filter(@filter)
+      criteria = transform_filter_option
       command = build_command(@command)
       options = criteria.merge(
         document_name: "AWS-RunShellScript", # default
         comment: "sonic #{ARGV.join(' ')}"[0..99], # comment has a max of 100 chars
-        parameters: { "commands" => command }
+        parameters: { "commands" => command },
+        # Default CloudWatchLog settings. Can be overwritten with settings.yml send_command
+        # IMPORTANT: make sure the EC2 instance the command runs on has access to write to CloudWatch Logs.
+        cloud_watch_output_config: {
+          # cloud_watch_log_group_name: "ssm", # Defaults to /aws/ssm/AWS-RunShellScript (aws/ssm/SystemsManagerDocumentName https://amzn.to/38TKVse)
+          cloud_watch_output_enabled: true,
+        },
       )
       settings_options = settings["send_command"] || {}
       options.merge(settings_options.deep_symbolize_keys)
@@ -180,6 +202,12 @@ module Sonic
       @settings ||= Setting.new.data
     end
 
+    def check_filter_options!
+      return if @tags || @instance_ids
+      puts "ERROR: Please provide --tags or --instance-ids option".color(:red)
+      exit 1
+    end
+
     #
     # Public: Transform the filter to the ssm send_command equivalent options
     #
@@ -187,41 +215,31 @@ module Sonic
     #
     # Examples
     #
-    #   transform_filter(["hi-web-prod", "hi-worker-prod", "i-006a097bb10643e20"])
+    #   transform_filter_option
     #   # => {
     #      instance_ids: ["i-006a097bb10643e20"],
     #      targets: [{key: "Name", values: "hi-web-prod,hi-worker-prod"}]
     #     }
     #
     # Returns the duplicated String.
-    def transform_filter(filter)
-      valid = validate_filter(filter)
-      unless valid
-        UI.error("The filter you provided '#{filter.join(',')}' is not valid.")
-        UI.say("The filter must either be all instance ids or just a list of tag names.")
-        exit 1
-      end
-
-      if filter.detect { |i| instance_id?(i) }
-        instance_ids = filter
-        {instance_ids: instance_ids}
-      else
-        tags = filter
-        targets = [{
-          key: "tag:#{tag_name}",
-          values: tags
-        }]
+    def transform_filter_option
+      if @tags
+        list = @tags.split(';')
+        targets = list.inject([]) do |final,item|
+          tag_name,value_list = item.split('=')
+          values = value_list.split(',').map(&:strip)
+          # structure expected by ssm send_command
+          option = {
+            key: "tag:#{tag_name}",
+            values: values
+          }
+          final << option
+          final
+        end
         {targets: targets}
-      end
-    end
-
-    # Either all instance ids are no instance ids is a valid filter
-    def validate_filter(filter)
-      if filter.detect { |i| instance_id?(i) }
-        instance_ids = filter.select { |i| instance_id?(i) }
-        instance_ids.size == filter.size
-      else
-        true
+      else # @instance_ids
+        instance_ids = @instance_ids.split(',')
+        {instance_ids: instance_ids}
       end
     end
 
@@ -253,8 +271,7 @@ You can use the following command to check registered instances to SSM.
 #{ssm_describe_command}
       EOS
       UI.warn(message)
-      copy_paste_clipboard(ssm_describe_command)
-      UI.say "Pro tip: ssm describe-instance-information already in your copy/paste clipboard."
+      copy_paste_clipboard(ssm_describe_command, "Pro tip: ssm describe-instance-information already in your copy/paste clipboard.")
     end
 
     def file_path?(command)
@@ -311,9 +328,10 @@ EOL
       end
     end
 
-    def copy_paste_clipboard(command)
+    def copy_paste_clipboard(command, text)
       return unless RUBY_PLATFORM =~ /darwin/
       system("echo '#{command}' | pbcopy")
+      UI.say text
     end
   end
 end
