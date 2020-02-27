@@ -44,26 +44,31 @@ Here is a quick overview of sonic abilities:
 
     # ssh into an instance
     sonic ssh i-0f7f833131a51ce35
-    sonic ssh hi-web # ec2 tag
-    sonic ssh hi-web --cluster staging # ecs service name
-    sonic ssh hi-web --cluster staging # ecs service name
+    sonic ssh demo-web # ec2 tag
+    sonic ssh demo-web --cluster staging # ecs service name
+    sonic ssh demo-web --cluster staging # ecs service name
     sonic ssh 7fbc8c75-4675-4d39-a5a4-0395ff8cd474 --cluster staging # ECS container id
     sonic ssh 1ed12abd-645c-4a05-9acf-739b9d790170 --cluster staging # ECS task id
 
     # docker exec to a running ECS docker container
-    sonic ecs exec hi-web
+    sonic ecs exec demo-web
 
     # docker run with the same environment as the ECS docker running containers
-    sonic ecs sh hi-web
+    sonic ecs sh demo-web
 
-    # run command on 1 instance
-    sonic execute i-0f7f833131a51ce35 uptime
+    # run command with instance ids
+    sonic execute --instance-ids i-111 uptime
+    sonic execute --instance-ids i-111,i-222 uptime
 
-    # run command on all instances tagged with hi-web and worker
-    sonic execute hi-web,hi-worker uptime
+    # run command on all instances tagged with Name demo-web and worker
+    sonic execute --tags Name=demo-web,demo-worker uptime
+
+    # run command on all instances with multiple tags
+    # Quotes are important due to semi-colon
+    sonic execute --tags "Name=demo-web,demo-worker;Owner=test" uptime
 
     # list ec2 instances
-    sonic list hi-web
+    sonic list demo-web
 
 ## Contributing
 

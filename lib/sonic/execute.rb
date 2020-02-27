@@ -6,9 +6,11 @@ module Sonic
     include AwsService
 
     def initialize(command, options)
+      puts "initialize command #{command.inspect}"
       @command = command
       @options = options
-      @filter = @options[:filter].split(',').map{|s| s.strip}
+      @tags = @options[:tags]
+      @instance_ids = @options[:instance_ids]
     end
 
     # aws ssm send-command \
@@ -18,6 +20,11 @@ module Sonic
     #   --parameters '{"commands":["#!/usr/bin/python","print \"Hello world from python\""]}' \
     #   --query "Command.CommandId"
     def execute
+      puts "@tags #{@tags.inspect}"
+      puts "@instance_ids #{@instance_ids.inspect}"
+      puts "@command #{@command.inspect}"
+
+      check_filter_options!
       ssm_options = build_ssm_options
       if @options[:noop]
         UI.noop = true
@@ -51,7 +58,7 @@ module Sonic
       puts
       return if @options[:noop]
       status = wait(command_id)
-      display_ssm_output(command_id)
+      instances_found = display_ssm_output(command_id)
       display_console_url(command_id)
 
       if status == "Success"
@@ -83,7 +90,13 @@ module Sonic
     def display_ssm_output(command_id)
       resp = ssm.list_command_invocations(command_id: command_id)
       command_invocations = resp.command_invocations
-      instance_id = command_invocations.first.instance_id
+      command_invocation = command_invocations.first
+      unless command_invocation
+        puts "WARN: No instances found that matches the --tags or --instance-ids option".color(:yellow)
+        return false # instances_found
+      end
+      instance_id = command_invocation.instance_id
+
       if command_invocations.size > 1
         puts "Multiple instance targets. Total targets: #{command_invocations.size}. Only displaying output for #{instance_id}."
       else
@@ -97,6 +110,7 @@ module Sonic
       ssm_output(resp, "output")
       ssm_output(resp, "error")
       puts
+      true # instances_found
     end
 
     def display_console_url(command_id)
@@ -172,7 +186,7 @@ module Sonic
     end
 
     def build_ssm_options
-      criteria = transform_filter(@filter)
+      criteria = transform_filter_option
       command = build_command(@command)
       options = criteria.merge(
         document_name: "AWS-RunShellScript", # default
@@ -193,6 +207,12 @@ module Sonic
       @settings ||= Setting.new.data
     end
 
+    def check_filter_options!
+      return if @tags || @instance_ids
+      puts "ERROR: Please provide --tags or --instance-ids option".color(:red)
+      exit 1
+    end
+
     #
     # Public: Transform the filter to the ssm send_command equivalent options
     #
@@ -200,41 +220,31 @@ module Sonic
     #
     # Examples
     #
-    #   transform_filter(["hi-web-prod", "hi-worker-prod", "i-006a097bb10643e20"])
+    #   transform_filter_option
     #   # => {
     #      instance_ids: ["i-006a097bb10643e20"],
     #      targets: [{key: "Name", values: "hi-web-prod,hi-worker-prod"}]
     #     }
     #
     # Returns the duplicated String.
-    def transform_filter(filter)
-      valid = validate_filter(filter)
-      unless valid
-        UI.error("The filter you provided '#{filter.join(',')}' is not valid.")
-        UI.say("The filter must either be all instance ids or just a list of tag names.")
-        exit 1
-      end
-
-      if filter.detect { |i| instance_id?(i) }
-        instance_ids = filter
-        {instance_ids: instance_ids}
-      else
-        tags = filter
-        targets = [{
-          key: "tag:#{tag_name}",
-          values: tags
-        }]
+    def transform_filter_option
+      if @tags
+        list = @tags.split(';')
+        targets = list.inject([]) do |final,item|
+          tag_name,value_list = item.split('=')
+          values = value_list.split(',').map(&:strip)
+          # structure expected by ssm send_command
+          option = {
+            key: "tag:#{tag_name}",
+            values: values
+          }
+          final << option
+          final
+        end
         {targets: targets}
-      end
-    end
-
-    # Either all instance ids are no instance ids is a valid filter
-    def validate_filter(filter)
-      if filter.detect { |i| instance_id?(i) }
-        instance_ids = filter.select { |i| instance_id?(i) }
-        instance_ids.size == filter.size
-      else
-        true
+      else # @instance_ids
+        instance_ids = @instance_ids.split(',')
+        {instance_ids: instance_ids}
       end
     end
 
