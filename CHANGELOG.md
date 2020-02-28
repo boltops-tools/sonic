@@ -1,7 +1,13 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
-This project *tries* to adhere to [Semantic Versioning](http://semver.org/), even before v1.0.
+This project *loosely* adheres to [Semantic Versioning](http://semver.org/), even before v1.0.
+
+## [2.2.0]
+- #7 sonic execute command: `--tags` and `--instance-id` options instead of polymorphic list. Breaking behavior.
+- display output even if tags used
+- configure default log group
+- correct exit status
 
 ## [2.1.1]
 - use rainbow gem for terminal colors
