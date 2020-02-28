@@ -11,8 +11,13 @@ describe Sonic::CLI do
       expect(out).to include("=> ssh")
     end
 
-    it "execute should print that command has been sent" do
-      out = execute("exe/sonic execute #{@args} 1,2,3 uptime")
+    it "execute should print that command has been sent --instance-ids" do
+      out = execute("exe/sonic execute #{@args} --instance-ids i-1,i-2,i-3 uptime")
+      expect(out).to include("Command sent")
+    end
+
+    it "execute should print that command has been sent --tags" do
+      out = execute("exe/sonic execute #{@args} --tags Name=value uptime")
       expect(out).to include("Command sent")
     end
 
