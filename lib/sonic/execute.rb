@@ -53,7 +53,7 @@ module Sonic
       puts
       return if @options[:noop]
       status = wait(command_id)
-      instances_found = display_ssm_output(command_id)
+      display_ssm_output(command_id)
       display_console_url(command_id)
 
       if status == "Success"
@@ -66,7 +66,7 @@ module Sonic
     end
 
     def exit_status(code)
-      exit(code) unless cli?
+      exit(code) if cli?
 
       if code == 0
         true
