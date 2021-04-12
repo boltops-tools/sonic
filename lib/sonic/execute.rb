@@ -58,11 +58,25 @@ module Sonic
 
       if status == "Success"
         puts "Command successful: #{status}".color(:green)
-        exit(0)
+        exit_status(0)
       else
         puts "Command unsuccessful: #{status}".color(:red)
-        exit(1)
+        exit_status(1)
       end
+    end
+
+    def exit_status(code)
+      exit(code) unless cli?
+
+      if code == 0
+        true
+      else
+        raise "Error running command"
+      end
+    end
+
+    def cli?
+      ARGV.include?('sonic')
     end
 
     def wait(command_id)
