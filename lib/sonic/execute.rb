@@ -76,7 +76,7 @@ module Sonic
     end
 
     def cli?
-      ARGV.include?('sonic')
+      $0.include?('sonic')
     end
 
     def wait(command_id)
