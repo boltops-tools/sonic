@@ -256,7 +256,7 @@ module Sonic
         # The script is being feed inline so just join the command together into one script.
         # Still keep in an array form because that's how ssn.send_command works with AWS-RunShellScript
         # usually reads the command.
-        [command.join(" ")]
+        command.is_a?(Array) ? command : [command]
       end
     end
 
