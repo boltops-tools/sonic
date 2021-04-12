@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 This project *loosely* adheres to [Semantic Versioning](http://semver.org/), even before v1.0.
 
+## [2.2.3] - 2021-04-12
+- [#12](https://github.com/boltops-tools/sonic/pull/12) fix cli check
+
 ## [2.2.2] - 2021-04-12
 - [#11](https://github.com/boltops-tools/sonic/pull/11) cli check
 
