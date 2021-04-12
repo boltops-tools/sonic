@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "http://sonic-screwdriver.cloud/"
   spec.license       = "MIT"
 
-  spec.files         = `git ls-files`.split($/)
+  spec.files         = File.directory?('.git') ? `git ls-files`.split($/) : Dir.glob("**/*")
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
