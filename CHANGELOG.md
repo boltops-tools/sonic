@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 This project *loosely* adheres to [Semantic Versioning](http://semver.org/), even before v1.0.
 
+## [2.2.1] - 2021-04-12
+- [#9](https://github.com/boltops-tools/sonic/pull/9) improve command array handling
+
 ## [2.2.0]
 - #7 sonic execute command: `--tags` and `--instance-id` options instead of polymorphic list. Breaking behavior.
 - display output even if tags used
