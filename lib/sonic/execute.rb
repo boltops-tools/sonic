@@ -197,9 +197,11 @@ module Sonic
     def build_ssm_options
       criteria = transform_filter_option
       command = build_command(@command)
+      comment = @options[:comment] || "sonic #{ARGV.join(' ')}"
+      comment = comment[0..99] # comment has a max of 100 chars
       options = criteria.merge(
         document_name: "AWS-RunShellScript", # default
-        comment: "sonic #{ARGV.join(' ')}"[0..99], # comment has a max of 100 chars
+        comment: comment,
         parameters: { "commands" => command },
         # Default CloudWatchLog settings. Can be overwritten with settings.yml send_command
         # IMPORTANT: make sure the EC2 instance the command runs on has access to write to CloudWatch Logs.

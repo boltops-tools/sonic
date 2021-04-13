@@ -29,6 +29,7 @@ module Sonic
     # filter - Filter ec2 instances by tag name or instance_ids separated by commas
     option :instance_ids, desc: %Q|Instance ids to execute command on. Format: --instance-ids "i-111,i-222"|
     option :tags, desc: %Q|Tags used to determine what instances to execute command on. Format: --tags "Key1=v1,v2;Key2=v3"|
+    option :comment, desc: "comment. defaults to the sonic command used"
     def execute(*command)
       Execute.new(command, options).execute
     end
