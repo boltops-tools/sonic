@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 This project *loosely* adheres to [Semantic Versioning](http://semver.org/), even before v1.0.
 
+## [2.2.5] - 2021-04-24
+- [#14](https://github.com/boltops-tools/sonic/pull/14) execute --timeout option: executionTimeout
+
 ## [2.2.4] - 2021-04-13
 - [#13](https://github.com/boltops-tools/sonic/pull/13) execute --comment option
 
