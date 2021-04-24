@@ -30,6 +30,7 @@ module Sonic
     option :instance_ids, desc: %Q|Instance ids to execute command on. Format: --instance-ids "i-111,i-222"|
     option :tags, desc: %Q|Tags used to determine what instances to execute command on. Format: --tags "Key1=v1,v2;Key2=v3"|
     option :comment, desc: "comment. defaults to the sonic command used"
+    option :timeout, aliases: %w[t], desc: "timeout in seconds. default to nil which uses AWS-RunShellScript default of 3600"
     def execute(*command)
       Execute.new(command, options).execute
     end
