@@ -199,10 +199,15 @@ module Sonic
       command = build_command(@command)
       comment = @options[:comment] || "sonic #{ARGV.join(' ')}"
       comment = comment[0..99] # comment has a max of 100 chars
+
+      parameters = { "commands" => command }
+      t = @options[:timeout]
+      parameters[:executionTimeout] = [t] if t # weird but executionTimeout expects an Array
+
       options = criteria.merge(
         document_name: "AWS-RunShellScript", # default
         comment: comment,
-        parameters: { "commands" => command },
+        parameters: parameters,
         # Default CloudWatchLog settings. Can be overwritten with settings.yml send_command
         # IMPORTANT: make sure the EC2 instance the command runs on has access to write to CloudWatch Logs.
         cloud_watch_output_config: {
