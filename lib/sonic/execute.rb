@@ -202,7 +202,7 @@ module Sonic
 
       parameters = { "commands" => command }
       t = @options[:execution_timeout] || @options[:timeout]
-      parameters[:executionTimeout] = [t] if t # weird but executionTimeout expects an Array
+      parameters[:executionTimeout] = [t.to_s] if t # weird but executionTimeout expects an Array with String element
 
       options = criteria.merge(
         document_name: "AWS-RunShellScript", # default
@@ -217,7 +217,7 @@ module Sonic
       )
 
       t = @options[:execution_timeout] || @options[:timeout]
-      options[:timeout_seconds] = t if t
+      options[:timeout_seconds] = t.to_s if t
 
       settings_options = settings["send_command"] || {}
       options.merge(settings_options.deep_symbolize_keys)
