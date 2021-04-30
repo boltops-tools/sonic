@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 This project *loosely* adheres to [Semantic Versioning](http://semver.org/), even before v1.0.
 
+## [2.2.7] - 2021-04-30
+- aws ssm send_command sdk requires string for timeout values
+
 ## [2.2.6] - 2021-04-30
 - [#15](https://github.com/boltops-tools/sonic/pull/15) execution-timeout and delivery-timeout options and timeout sets both …
 
