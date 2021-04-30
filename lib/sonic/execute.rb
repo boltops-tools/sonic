@@ -201,7 +201,7 @@ module Sonic
       comment = comment[0..99] # comment has a max of 100 chars
 
       parameters = { "commands" => command }
-      t = @options[:timeout]
+      t = @options[:execution_timeout] || @options[:timeout]
       parameters[:executionTimeout] = [t] if t # weird but executionTimeout expects an Array
 
       options = criteria.merge(
@@ -215,6 +215,10 @@ module Sonic
           cloud_watch_output_enabled: true,
         },
       )
+
+      t = @options[:execution_timeout] || @options[:timeout]
+      options[:timeout_seconds] = t if t
+
       settings_options = settings["send_command"] || {}
       options.merge(settings_options.deep_symbolize_keys)
     end
